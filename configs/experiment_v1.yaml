@@ -1,0 +1,195 @@
+# ============================================================
+# BTP EXPERIMENT V1 CONFIGURATION
+# ============================================================
+#
+# Purpose:
+# Central configuration for the OTFS research pipeline.
+#
+# This file is the single source of truth for experiment-level
+# parameters. Python scripts should load these values instead
+# of defining their own copies.
+#
+# Dataset contract:
+#   rx_dd : (16, 32)
+#   tx_dd : (368,)
+#   h_dd  : (432, 368)
+#
+# ============================================================
+
+
+
+# Project
+
+project:
+  name: "BTP"
+  experiment: "otfs_v1"
+  dataset_version: "v1"
+
+
+
+# Dataset
+
+
+dataset:
+
+  root: "datasets/otfs"
+
+  raw_dir: "raw"
+
+  metadata_dir: "metadata"
+
+  processed_dir: "processed"
+
+  expected_samples: 900
+
+  frames_per_condition: 100
+
+
+
+# OTFS Grid
+
+
+otfs:
+
+  # Number of delay bins.
+  M: 32
+
+  # Number of Doppler bins.
+  N: 16
+
+  # Carrier frequency in GHz.
+  carrier_frequency_ghz: 4.0
+
+  # Subcarrier spacing in kHz.
+  subcarrier_spacing_khz: 15.0
+
+
+
+# Modulation
+
+
+modulation:
+
+  scheme: "QPSK"
+
+  # Data symbols are generated with unit average power.
+  unit_power: true
+
+
+
+# Channel
+
+
+channel:
+
+  # SNR operating points used for V1.
+  snr_db:
+    - 10
+    - 15
+    - 20
+
+  # User-equipment/channel velocities.
+  velocity_kmh:
+    - 30
+    - 120
+    - 500
+
+  # Number of multipath components.
+  num_paths: 4
+
+  # Maximum delay index.
+  max_delay: 4
+
+  # Force fractional Doppler generation.
+  force_fractional_doppler: true
+
+
+
+# Pilot / Guard Configuration
+
+
+pilot:
+
+  pilot_snr_db: 25
+
+  # Pilot length in delay dimension.
+  pilot_delay_length: 1
+
+  # Pilot length in Doppler dimension.
+  pilot_doppler_length: 1
+
+
+
+# Dataset Split
+
+
+split:
+
+  train_ratio: 0.70
+
+  validation_ratio: 0.15
+
+  test_ratio: 0.15
+
+  random_seed: 42
+
+
+
+# Reproducibility
+
+
+reproducibility:
+
+  seed: 42
+
+
+
+# Dataset Representation
+
+
+representation:
+
+  input: "rx_dd"
+
+  target: "tx_dd"
+
+  channel_ground_truth: "h_dd"
+
+  expected_grid_shape:
+    rows: 16
+    cols: 32
+
+  expected_data_symbols: 368
+
+  expected_channel_shape:
+    rows: 432
+    cols: 368
+
+  expected_num_paths: 4
+
+
+  # Baseline Experiment
+
+baseline:
+
+  # Data SNR used during channel-estimation evaluation.
+  data_snr_db: 10
+
+  # Pilot SNR sweep.
+  pilot_snr_db:
+    - 25
+    - 30
+    - 35
+    - 40
+    - 45
+    - 50
+
+  # Monte Carlo frames per velocity / pilot-SNR condition.
+  num_frames: 100
+
+  # Output directory relative to the project root.
+  output_dir: "experiments/baseline"
+
+  # Result files.
+  results_file: "whole_joint_baseline_results.csv"
+  plot_file: "whole_joint_baseline.png"
