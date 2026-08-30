@@ -1,0 +1,14 @@
+OTFS DATASET V1
+================
+M = 32
+N = 16
+SNR = [10, 15, 20]
+Velocity = [30, 120, 500]
+Frames per condition = 100
+Paths = 4
+Maximum delay = 4
+Pilot SNR = 25 dB
+Carrier frequency = 4.0 GHz
+Subcarrier spacing = 15.0 kHz
+Modulation = QPSK
+Random seed = 42

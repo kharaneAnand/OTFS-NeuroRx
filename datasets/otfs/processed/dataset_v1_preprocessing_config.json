@@ -1,0 +1,24 @@
+{
+    "dataset_version": "v1",
+    "random_seed": 42,
+    "train_ratio": 0.7,
+    "validation_ratio": 0.15,
+    "test_ratio": 0.15,
+    "total_samples": 900,
+    "train_samples": 630,
+    "validation_samples": 135,
+    "test_samples": 135,
+    "grid_shape": [
+        16,
+        32
+    ],
+    "data_symbols": 368,
+    "channel_shape": [
+        432,
+        368
+    ],
+    "num_paths": 4,
+    "input": "rx_dd",
+    "target": "tx_dd",
+    "channel_ground_truth": "h_dd"
+}
