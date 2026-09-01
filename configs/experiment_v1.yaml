@@ -40,6 +40,8 @@ dataset:
 
   processed_dir: "processed"
 
+  split_metadata_file: "dataset_v1_split.csv"
+
   expected_samples: 900
 
   frames_per_condition: 100
@@ -193,3 +195,76 @@ baseline:
   # Result files.
   results_file: "whole_joint_baseline_results.csv"
   plot_file: "whole_joint_baseline.png"
+
+
+
+
+# DNN MODEL
+
+
+dnn:
+
+  # Fully connected hidden-layer dimensions.
+  hidden_dims:
+    - 512
+    - 256
+    - 128
+
+  # Dropout probability used between hidden layers.
+  dropout: 0.20
+
+  # Training configuration.
+  training:
+
+    # Maximum number of training epochs.
+    epochs: 100
+
+    # Samples processed per optimizer step.
+    batch_size: 32
+
+    # Initial learning rate.
+    learning_rate: 0.001
+
+    # L2 regularization strength.
+    weight_decay: 0.0001
+
+    # Maximum gradient norm.
+    gradient_clip_norm: 1.0
+
+    # Number of epochs without validation improvement
+    # before training stops.
+    early_stopping_patience: 10
+
+    # Minimum validation improvement required to reset
+    # early stopping.
+    early_stopping_min_delta: 0.000001
+
+    # Learning-rate reduction factor.
+    scheduler_factor: 0.5
+
+    # Epochs without validation improvement before reducing
+    # the learning rate.
+    scheduler_patience: 4
+
+
+  # Checkpoint/output configuration.
+  output:
+
+    # Directory relative to the project root.
+    directory: "experiments/dnn"
+
+    # Best validation checkpoint.
+    checkpoint_file: "best_model.pt"
+
+    # Training history.
+    history_file: "training_history.csv"
+
+    
+  # Evaluation output configuration.
+  evaluation:
+
+    # Aggregate evaluation results.
+    output_file: "evaluation_results.json"
+
+    # Per-test-sample evaluation results.
+    per_sample_file: "per_sample_results.csv"

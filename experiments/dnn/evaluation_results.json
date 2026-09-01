@@ -1,0 +1,13 @@
+{
+  "dataset_version": "v1",
+  "model": "DNN",
+  "metrics": {
+    "ber": 0.7489935587761675,
+    "ser": 0.001932367149758454,
+    "nmse": 1.0035047107129185,
+    "inference_time_seconds": 0.005820500024128705,
+    "inference_time_per_sample_seconds": 4.3114814993545965e-05,
+    "test_samples": 135.0,
+    "trainable_parameters": 785760.0
+  }
+}

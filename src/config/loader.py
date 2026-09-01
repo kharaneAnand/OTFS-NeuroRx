@@ -143,6 +143,86 @@ def validate_config(config: Config) -> None:
             "At least one velocity operating point is required."
         )
 
+        # DNN architecture must be valid.
+
+    if not config.dnn.hidden_dims:
+
+        raise ValueError(
+            "DNN must contain at least one hidden layer."
+        )
+
+    if any(
+        hidden_dim <= 0
+        for hidden_dim in config.dnn.hidden_dims
+    ):
+
+        raise ValueError(
+            "DNN hidden dimensions must be positive."
+        )
+
+    # Dropout must be within the valid range.
+
+    if not 0.0 <= config.dnn.dropout < 1.0:
+
+        raise ValueError(
+            "DNN dropout must satisfy 0 <= dropout < 1."
+        )
+
+    # Training parameters must be valid.
+
+    if config.dnn.training.epochs <= 0:
+
+        raise ValueError(
+            "DNN training epochs must be positive."
+        )
+
+    if config.dnn.training.batch_size <= 0:
+
+        raise ValueError(
+            "DNN batch size must be positive."
+        )
+
+    if config.dnn.training.learning_rate <= 0:
+
+        raise ValueError(
+            "DNN learning rate must be positive."
+        )
+
+    if config.dnn.training.weight_decay < 0:
+
+        raise ValueError(
+            "DNN weight decay cannot be negative."
+        )
+
+    if config.dnn.training.gradient_clip_norm <= 0:
+
+        raise ValueError(
+            "DNN gradient clip norm must be positive."
+        )
+
+    if config.dnn.training.early_stopping_patience <= 0:
+
+        raise ValueError(
+            "DNN early stopping patience must be positive."
+        )
+
+    if config.dnn.training.early_stopping_min_delta < 0:
+
+        raise ValueError(
+            "DNN early stopping minimum delta cannot be negative."
+        )
+
+    if not 0.0 < config.dnn.training.scheduler_factor < 1.0:
+
+        raise ValueError(
+            "DNN scheduler factor must satisfy 0 < factor < 1."
+        )
+
+    if config.dnn.training.scheduler_patience <= 0:
+
+        raise ValueError(
+            "DNN scheduler patience must be positive."
+        )
 
 
 # Loader
