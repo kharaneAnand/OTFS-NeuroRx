@@ -328,3 +328,29 @@ informed_residual:
     history_file: "training_history.csv"
     evaluation_file: "evaluation_results.json"
     per_sample_file: "per_sample_results.csv"
+
+
+# OAMP-DL MODEL
+
+
+oamp_dl:
+
+  iterations: 20
+
+  training:
+    epochs: 100
+    batch_size: 8
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    gradient_clip_norm: 1.0
+    early_stopping_patience: 10
+    early_stopping_min_delta: 0.000001
+    scheduler_factor: 0.5
+    scheduler_patience: 4
+
+  output:
+    directory: "experiments/oamp_dl"
+    checkpoint_file: "best_model.pt"
+    history_file: "training_history.csv"
+    evaluation_file: "evaluation_results.json"
+    per_sample_file: "per_sample_results.csv"

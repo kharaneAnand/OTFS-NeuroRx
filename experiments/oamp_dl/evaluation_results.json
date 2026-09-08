@@ -1,0 +1,141 @@
+{
+  "seed": 42,
+  "test_samples": 135,
+  "oamp_dl_iterations": 20,
+  "noise_variance_source": "per-sample configured data SNR used for H_hat generation",
+  "mmse": {
+    "ber": 0.06687801932367149,
+    "ser": 0.12763687600644125,
+    "nmse": 0.3682463672875398,
+    "ber_std": 0.041196791137471524,
+    "ser_std": 0.07569407927165457,
+    "nmse_std": 0.15795273031388413,
+    "ber_ci95": 0.0069494842787893455,
+    "ser_ci95": 0.012768829789204877,
+    "nmse_ci95": 0.026645036805057393
+  },
+  "oamp_dl": {
+    "ber": 0.03296095008051529,
+    "ser": 0.06344605475040255,
+    "nmse": 0.10174544213735098,
+    "ber_std": 0.039039313457853185,
+    "ser_std": 0.07354309768060621,
+    "nmse_std": 0.11675049854575287,
+    "ber_ci95": 0.006585539495655278,
+    "ser_ci95": 0.01240598083087037,
+    "nmse_ci95": 0.019694634746601415
+  },
+  "inference_time_seconds": 0.7743667999948229,
+  "inference_time_per_sample_seconds": 0.0057360503703320215,
+  "oamp_dl_beats_mmse_all_test_metrics": true,
+  "specialist_conditions": [
+    {
+      "snr_db": 10,
+      "velocity_kmh": 30,
+      "samples": 15,
+      "mmse_ber": 0.08333333333333333,
+      "mmse_ser": 0.1583333333333333,
+      "mmse_nmse": 0.3558574279397006,
+      "oamp_dl_ber": 0.05996376811594203,
+      "oamp_dl_ser": 0.11503623188405797,
+      "oamp_dl_nmse": 0.1876097726073292,
+      "oamp_dl_beats_mmse_all_metrics": true
+    },
+    {
+      "snr_db": 10,
+      "velocity_kmh": 120,
+      "samples": 15,
+      "mmse_ber": 0.06884057971014493,
+      "mmse_ser": 0.13206521739130433,
+      "mmse_nmse": 0.34002501526493456,
+      "oamp_dl_ber": 0.042663043478260866,
+      "oamp_dl_ser": 0.08206521739130435,
+      "oamp_dl_nmse": 0.1295584565438272,
+      "oamp_dl_beats_mmse_all_metrics": true
+    },
+    {
+      "snr_db": 10,
+      "velocity_kmh": 500,
+      "samples": 15,
+      "mmse_ber": 0.06911231884057972,
+      "mmse_ser": 0.1318840579710145,
+      "mmse_nmse": 0.332071776683825,
+      "oamp_dl_ber": 0.04655797101449275,
+      "oamp_dl_ser": 0.09021739130434785,
+      "oamp_dl_nmse": 0.14231843564610508,
+      "oamp_dl_beats_mmse_all_metrics": true
+    },
+    {
+      "snr_db": 15,
+      "velocity_kmh": 30,
+      "samples": 15,
+      "mmse_ber": 0.06105072463768116,
+      "mmse_ser": 0.11503623188405797,
+      "mmse_nmse": 0.34528872015591167,
+      "oamp_dl_ber": 0.03297101449275362,
+      "oamp_dl_ser": 0.06322463768115942,
+      "oamp_dl_nmse": 0.10595722221120876,
+      "oamp_dl_beats_mmse_all_metrics": true
+    },
+    {
+      "snr_db": 15,
+      "velocity_kmh": 120,
+      "samples": 15,
+      "mmse_ber": 0.07300724637681161,
+      "mmse_ser": 0.140036231884058,
+      "mmse_nmse": 0.37917464275172114,
+      "oamp_dl_ber": 0.047644927536231875,
+      "oamp_dl_ser": 0.09057971014492752,
+      "oamp_dl_nmse": 0.14049029849360836,
+      "oamp_dl_beats_mmse_all_metrics": true
+    },
+    {
+      "snr_db": 15,
+      "velocity_kmh": 500,
+      "samples": 15,
+      "mmse_ber": 0.06449275362318839,
+      "mmse_ser": 0.12518115942028984,
+      "mmse_nmse": 0.36865526882584,
+      "oamp_dl_ber": 0.02173913043478261,
+      "oamp_dl_ser": 0.0427536231884058,
+      "oamp_dl_nmse": 0.06741174064568382,
+      "oamp_dl_beats_mmse_all_metrics": true
+    },
+    {
+      "snr_db": 20,
+      "velocity_kmh": 30,
+      "samples": 15,
+      "mmse_ber": 0.06304347826086956,
+      "mmse_ser": 0.11956521739130435,
+      "mmse_nmse": 0.39351911324990557,
+      "oamp_dl_ber": 0.022282608695652174,
+      "oamp_dl_ser": 0.042753623188405795,
+      "oamp_dl_nmse": 0.07024806161513915,
+      "oamp_dl_beats_mmse_all_metrics": true
+    },
+    {
+      "snr_db": 20,
+      "velocity_kmh": 120,
+      "samples": 15,
+      "mmse_ber": 0.06431159420289854,
+      "mmse_ser": 0.12083333333333333,
+      "mmse_nmse": 0.4256415684918136,
+      "oamp_dl_ber": 0.013043478260869566,
+      "oamp_dl_ser": 0.02518115942028986,
+      "oamp_dl_nmse": 0.041146013728894267,
+      "oamp_dl_beats_mmse_all_metrics": true
+    },
+    {
+      "snr_db": 20,
+      "velocity_kmh": 500,
+      "samples": 15,
+      "mmse_ber": 0.05471014492753623,
+      "mmse_ser": 0.10579710144927537,
+      "mmse_nmse": 0.3739837722242073,
+      "oamp_dl_ber": 0.009782608695652173,
+      "oamp_dl_ser": 0.019202898550724636,
+      "oamp_dl_nmse": 0.030968977744363017,
+      "oamp_dl_beats_mmse_all_metrics": true
+    }
+  ]
+}
