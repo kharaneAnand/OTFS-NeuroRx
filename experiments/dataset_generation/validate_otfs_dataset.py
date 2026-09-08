@@ -43,6 +43,7 @@ def validate_sample(config, sample_file: Path) -> None:
         "rx_dd",
         "tx_dd",
         "h_dd",
+        "h_hat",
         "his",
         "lis",
         "kis",
@@ -63,6 +64,7 @@ def validate_sample(config, sample_file: Path) -> None:
         rx_dd = data["rx_dd"]
         tx_dd = data["tx_dd"]
         h_dd = data["h_dd"]
+        h_hat = data["h_hat"]
 
         his = data["his"]
         lis = data["lis"]
@@ -85,6 +87,12 @@ def validate_sample(config, sample_file: Path) -> None:
         if h_dd.shape != expected_channel_shape:
             raise ValueError(
                 f"Invalid h_dd shape: {h_dd.shape}; "
+                f"expected {expected_channel_shape}"
+            )
+
+        if h_hat.shape != expected_channel_shape:
+            raise ValueError(
+                f"Invalid h_hat shape: {h_hat.shape}; "
                 f"expected {expected_channel_shape}"
             )
 
@@ -114,6 +122,7 @@ def validate_sample(config, sample_file: Path) -> None:
             "rx_dd": rx_dd,
             "tx_dd": tx_dd,
             "h_dd": h_dd,
+            "h_hat": h_hat,
             "his": his,
             "lis": lis,
             "kis": kis,
@@ -354,6 +363,8 @@ def validate_dataset(config) -> None:
     print("Validating sample contents...")
     print("-" * 70)
 
+    h_hat_errors = {}
+
     for index, sample_file in enumerate(
         sample_files,
         start=1,
@@ -365,6 +376,36 @@ def validate_dataset(config) -> None:
                 sample_file,
             )
 
+            metadata_row = metadata.iloc[index - 1]
+
+            with np.load(
+                sample_file,
+                allow_pickle=False,
+            ) as sample:
+                h_dd = sample["h_dd"]
+                h_hat = sample["h_hat"]
+
+            condition = (
+                int(metadata_row["snr_db"]),
+                int(metadata_row["velocity_kmh"]),
+            )
+
+            signal_power = float(
+                np.sum(np.abs(h_dd) ** 2)
+            )
+
+            error_power = float(
+                np.sum(np.abs(h_hat - h_dd) ** 2)
+            )
+
+            condition_total = h_hat_errors.setdefault(
+                condition,
+                [0.0, 0.0, 0],
+            )
+            condition_total[0] += error_power
+            condition_total[1] += signal_power
+            condition_total[2] += 1
+
         except Exception as exc:
             raise RuntimeError(
                 f"Invalid sample: "
@@ -375,6 +416,36 @@ def validate_dataset(config) -> None:
             print(
                 f"  checked "
                 f"{index}/{len(sample_files)}"
+            )
+
+    print()
+    print("H_hat NMSE versus true h_dd")
+    print("-" * 70)
+
+    for snr in config.channel.snr_db:
+        for velocity in config.channel.velocity_kmh:
+            error_power, signal_power, sample_count = (
+                h_hat_errors[(int(snr), int(velocity))]
+            )
+
+            nmse_linear = (
+                error_power / signal_power
+                if signal_power > np.finfo(float).eps
+                else 1.0
+            )
+
+            nmse_db = 10.0 * np.log10(
+                max(
+                    nmse_linear,
+                    np.finfo(float).eps,
+                )
+            )
+
+            print(
+                f"SNR = {snr:>2} dB | "
+                f"Velocity = {velocity:>3} km/h | "
+                f"Samples = {sample_count:>3} | "
+                f"H_hat NMSE = {nmse_db:>8.3f} dB"
             )
 
     print()

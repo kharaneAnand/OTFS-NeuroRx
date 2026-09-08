@@ -1,0 +1,29 @@
+{
+  "test_samples": 135,
+  "mmse": {
+    "ber": 0.06687801932367149,
+    "ser": 0.12763687600644125,
+    "nmse": 0.3682463672875398,
+    "ber_std": 0.041196791137471524,
+    "ser_std": 0.07569407927165457,
+    "nmse_std": 0.15795273031388413,
+    "ber_ci95": 0.0069494842787893455,
+    "ser_ci95": 0.012768829789204877,
+    "nmse_ci95": 0.026645036805057393
+  },
+  "mmse_informed_residual": {
+    "ber": 0.06707930756843798,
+    "ser": 0.12814009661835749,
+    "nmse": 0.3697560752038884,
+    "ber_std": 0.04092605936758408,
+    "ser_std": 0.0754234496508521,
+    "nmse_std": 0.15773811851623434,
+    "ber_ci95": 0.006903814552418587,
+    "ser_ci95": 0.012723177294357268,
+    "nmse_ci95": 0.026608833953509246
+  },
+  "inference_time_seconds": 0.10624529999859078,
+  "inference_time_per_sample_seconds": 0.0007870022222117836,
+  "improves_ber_ser_nmse": false,
+  "success_criterion": "Informed residual must improve BER, SER, and NMSE on all 135 test samples without meaningful inference-time cost."
+}

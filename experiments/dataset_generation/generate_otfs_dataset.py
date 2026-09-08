@@ -117,6 +117,7 @@ def validate_dataset_contract(
     rx_dd: np.ndarray,
     tx_dd: np.ndarray,
     h_dd: np.ndarray,
+    h_hat: np.ndarray,
 ) -> None:
     expected_grid_shape = (
         config.representation.expected_grid_shape
@@ -155,6 +156,12 @@ def validate_dataset_contract(
     if h_dd.shape != expected_h_shape:
         raise ValueError(
             f"Invalid h_dd shape: {h_dd.shape}; "
+            f"expected {expected_h_shape}."
+        )
+
+    if h_hat.shape != expected_h_shape:
+        raise ValueError(
+            f"Invalid h_hat shape: {h_hat.shape}; "
             f"expected {expected_h_shape}."
         )
 
@@ -363,10 +370,12 @@ def generate_dataset(config) -> None:
                     max_delay,
                     kmax,
                     force_frac=force_fractional_doppler,
+                    rng=rng,
                 )
 
                 otfs.passChannel(
                     noise_power,
+                    rng=rng,
                 )
 
                 his, lis, kis = otfs.getCSI(
@@ -387,11 +396,43 @@ def generate_dataset(config) -> None:
                     )
                 )
 
+                threshold = (
+                    3.0
+                    * np.sqrt(noise_power)
+                )
+
+                (
+                    _,
+                    his_est,
+                    lis_est,
+                    kis_est,
+                ) = rg_rx.demap(
+                    isData=False,
+                    threshold=threshold,
+                )
+
+                if (
+                    his_est is None
+                    or lis_est is None
+                    or kis_est is None
+                    or len(np.atleast_1d(his_est)) == 0
+                ):
+                    h_hat = np.zeros_like(h_dd)
+                else:
+                    h_hat = np.asarray(
+                        otfs.getChannel(
+                            his_est,
+                            lis_est,
+                            kis_est,
+                        )
+                    )
+
                 validate_dataset_contract(
                     config,
                     rx_dd,
                     tx_data,
                     h_dd,
+                    h_hat,
                 )
 
                 sample_file = (
@@ -404,6 +445,7 @@ def generate_dataset(config) -> None:
                     rx_dd=rx_dd,
                     tx_dd=tx_data,
                     h_dd=h_dd,
+                    h_hat=h_hat,
                     his=his,
                     lis=lis,
                     kis=kis,

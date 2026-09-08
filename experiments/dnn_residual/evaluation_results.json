@@ -1,0 +1,29 @@
+{
+  "test_samples": 135,
+  "mmse": {
+    "ber": 0.06687801932367149,
+    "ser": 0.12763687600644125,
+    "nmse": 0.3682463757969715,
+    "ber_std": 0.041196791137471524,
+    "ser_std": 0.07569407927165457,
+    "nmse_std": 0.1579527342164717,
+    "ber_ci95": 0.0069494842787893455,
+    "ser_ci95": 0.012768829789204877,
+    "nmse_ci95": 0.026645037463384664
+  },
+  "mmse_residual": {
+    "ber": 0.07059178743961353,
+    "ser": 0.13407809983896937,
+    "nmse": 0.3774493443193259,
+    "ber_std": 0.04157799111031623,
+    "ser_std": 0.07625852868975062,
+    "nmse_std": 0.15315527628935732,
+    "ber_ci95": 0.007013788879832644,
+    "ser_ci95": 0.012864046728411155,
+    "nmse_ci95": 0.025835754567263426
+  },
+  "residual_inference_time_seconds": 0.005815499998789164,
+  "residual_inference_time_per_sample_seconds": 4.307777776880862e-05,
+  "improves_ber_ser_nmse": false,
+  "success_criterion": "Residual must improve BER, SER, and NMSE on all test samples with no meaningful inference-time cost."
+}

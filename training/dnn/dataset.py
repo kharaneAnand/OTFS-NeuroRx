@@ -20,11 +20,19 @@ class OTFSReceiverDataset(Dataset):
         raw_dir: str | Path,
         input_shape: tuple[int, int],
         output_symbols: int,
+        include_h_hat: bool = False,
+        channel_shape: tuple[int, int] | None = None,
     ) -> None:
         self.metadata = metadata.reset_index(drop=True)
         self.raw_dir = Path(raw_dir)
         self.input_shape = tuple(int(value) for value in input_shape)
         self.output_symbols = int(output_symbols)
+        self.include_h_hat = bool(include_h_hat)
+        self.channel_shape = (
+            tuple(int(value) for value in channel_shape)
+            if channel_shape is not None
+            else None
+        )
 
         if len(self.input_shape) != 2:
             raise ValueError("input_shape must contain exactly two dimensions.")
@@ -34,6 +42,22 @@ class OTFSReceiverDataset(Dataset):
 
         if self.output_symbols <= 0:
             raise ValueError("output_symbols must be positive.")
+
+        if self.include_h_hat and self.channel_shape is None:
+            raise ValueError(
+                "channel_shape is required when include_h_hat is True."
+            )
+
+        if self.channel_shape is not None:
+            if len(self.channel_shape) != 2:
+                raise ValueError(
+                    "channel_shape must contain exactly two dimensions."
+                )
+
+            if any(value <= 0 for value in self.channel_shape):
+                raise ValueError(
+                    "channel_shape dimensions must be positive."
+                )
 
         if self.metadata.empty:
             raise ValueError("Dataset split contains no samples.")
@@ -71,7 +95,7 @@ class OTFSReceiverDataset(Dataset):
         self,
         sample: Any,
         filename: str,
-    ) -> tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray | None]:
         """Validate the arrays required by the DNN receiver."""
 
         if not isinstance(sample, np.lib.npyio.NpzFile):
@@ -80,6 +104,9 @@ class OTFSReceiverDataset(Dataset):
             )
 
         required_keys = {"rx_dd", "tx_dd"}
+
+        if self.include_h_hat:
+            required_keys.add("h_hat")
 
         missing_keys = required_keys.difference(sample.files)
 
@@ -91,6 +118,11 @@ class OTFSReceiverDataset(Dataset):
 
         rx_dd = np.asarray(sample["rx_dd"])
         tx_dd = np.asarray(sample["tx_dd"])
+        h_hat = (
+            np.asarray(sample["h_hat"])
+            if self.include_h_hat
+            else None
+        )
 
         if rx_dd.shape != self.input_shape:
             raise ValueError(
@@ -106,6 +138,14 @@ class OTFSReceiverDataset(Dataset):
                 f"expected {expected_target_shape}."
             )
 
+        if self.include_h_hat and h_hat is not None:
+            if h_hat.shape != self.channel_shape:
+                raise ValueError(
+                    f"Sample '{filename}' has h_hat shape "
+                    f"{h_hat.shape}; expected "
+                    f"{self.channel_shape}."
+                )
+
         if not np.iscomplexobj(rx_dd):
             raise TypeError(
                 f"Sample '{filename}' rx_dd must be complex-valued."
@@ -115,6 +155,24 @@ class OTFSReceiverDataset(Dataset):
             raise TypeError(
                 f"Sample '{filename}' tx_dd must be complex-valued."
             )
+
+        if self.include_h_hat and h_hat is not None:
+            if not np.iscomplexobj(h_hat):
+                raise TypeError(
+                    f"Sample '{filename}' h_hat must be complex-valued."
+                )
+
+            if not np.isfinite(h_hat.real).all():
+                raise ValueError(
+                    f"Sample '{filename}' h_hat contains non-finite "
+                    "real values."
+                )
+
+            if not np.isfinite(h_hat.imag).all():
+                raise ValueError(
+                    f"Sample '{filename}' h_hat contains non-finite "
+                    "imaginary values."
+                )
 
         if not np.isfinite(rx_dd.real).all():
             raise ValueError(
@@ -136,12 +194,16 @@ class OTFSReceiverDataset(Dataset):
                 f"Sample '{filename}' tx_dd contains non-finite imaginary values."
             )
 
-        return rx_dd, tx_dd
+        return rx_dd, tx_dd, h_hat
 
     def __getitem__(
         self,
         index: int,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor] | tuple[
+        torch.Tensor,
+        torch.Tensor,
+        torch.Tensor,
+    ]:
         """Return one received grid and its transmitted symbols."""
 
         row = self.metadata.iloc[index]
@@ -149,7 +211,7 @@ class OTFSReceiverDataset(Dataset):
         sample_path = self._sample_path(filename)
 
         with np.load(sample_path, allow_pickle=False) as sample:
-            rx_dd, tx_dd = self._validate_sample(
+            rx_dd, tx_dd, h_hat = self._validate_sample(
                 sample,
                 filename,
             )
@@ -161,6 +223,13 @@ class OTFSReceiverDataset(Dataset):
         tx_tensor = torch.from_numpy(
             np.ascontiguousarray(tx_dd)
         ).to(torch.complex64)
+
+        if self.include_h_hat and h_hat is not None:
+            h_hat_tensor = torch.from_numpy(
+                np.ascontiguousarray(h_hat)
+            ).to(torch.complex64)
+
+            return rx_tensor, h_hat_tensor, tx_tensor
 
         return rx_tensor, tx_tensor
 

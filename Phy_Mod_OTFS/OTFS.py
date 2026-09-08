@@ -125,11 +125,14 @@ class OTFS(MatlabFuncHelper):
     @isRician:        use Rician fading
     @isSameDD:        use the same delay or doppler
     '''
-    def setChannel(self, in1, in2, in3, *, force_frac=False, isAWGN=False, isRician=False, isUniform=False, isSameDD=False):
+    def setChannel(self, in1, in2, in3, *, force_frac=False, isAWGN=False, isRician=False, isUniform=False, isSameDD=False, rng=None):
         in1 = np.asarray(in1);
         in2 = np.asarray(in2);
         in3 = np.asarray(in3);
         # set the channel
+        if rng is not None:
+            if not hasattr(rng, "random") or not hasattr(rng, "standard_normal"):
+                raise ValueError("rng must be a NumPy Generator or None.")
         if in1.ndim > 0 and in2.ndim > 0 and in3.ndim > 0:
             # no scalar, giving fixed path
             in1_len = in1.shape[-1];
@@ -168,7 +171,7 @@ class OTFS(MatlabFuncHelper):
             # create Doppler options [kmin, kmin+1, kmin+2 ... kmax, kmin ...]
             k_combs = np.tile(np.arange(-kmax, kmax + 1), (1, lmax- lmin + 1));
             # select P paths from all possible paths
-            taps_selected_idx = self.shufSelectTopNIdx(taps_max, p, isSameDD=isSameDD);
+            taps_selected_idx = self.shufSelectTopNIdx(taps_max, p, isSameDD=isSameDD, rng=rng);
             # CSI - delay
             self.delay_taps = np.take(l_combs, taps_selected_idx);
             lis_min_idx = np.argmin(self.delay_taps, -1, keepdims=True);
@@ -185,20 +188,24 @@ class OTFS(MatlabFuncHelper):
                     frac_range_max_neg = np.tile(np.random.rand(p)*(-kmax_frac-0.5)+0.5, (self.batch_size, 1));
                     frac_range_others = np.tile(np.random.rand(p) - 0.5, (self.batch_size, 1));
                 else:
-                    frac_range_max_pos = self.rand(p)*(kmax_frac+0.5)-0.5;
-                    frac_range_max_neg = self.rand(p)*(-kmax_frac-0.5)+0.5;
-                    frac_range_others = self.rand(p) - 0.5;
+                    random_uniform = np.random.rand if rng is None else rng.random
+                    frac_range_max_pos = random_uniform(p)*(kmax_frac+0.5)-0.5;
+                    frac_range_max_neg = random_uniform(p)*(-kmax_frac-0.5)+0.5;
+                    frac_range_others = random_uniform(p) - 0.5;
                 frac_range_all = frac_range_max_pos*doppler_taps_k_max_pos_idx + frac_range_max_neg*doppler_taps_k_max_neg_idx + frac_range_others*doppler_taps_k_other_idx;
                 self.doppler_taps = self.doppler_taps + frac_range_all;
             # CSI - others
             self.taps_num = p;
             if isAWGN:
-                self.chan_coef = sqrt(1/p)*sqrt(1/2)*(self.randn(p)+1j*self.randn(p));
+                random_normal = np.random.randn if rng is None else rng.standard_normal
+                self.chan_coef = sqrt(1/p)*sqrt(1/2)*(random_normal(p)+1j*random_normal(p));
             elif isRician:
                 rician_1st_path = np.asarray([sqrt(1/2/p)]) if self.batch_size == self.BATCH_SIZE_NO else np.asarray([[sqrt(1/2/p)]]*self.batch_size);
-                self.chan_coef = np.append(rician_1st_path, sqrt(1/2/p)*(self.randn(p-1)+1j*self.randn(p-1)));
+                random_normal = np.random.randn if rng is None else rng.standard_normal
+                self.chan_coef = np.append(rician_1st_path, sqrt(1/2/p)*(random_normal(p-1)+1j*random_normal(p-1)));
             else:
-                self.chan_coef = sqrt(1/2/p)*(self.randn(p)+1j*self.randn(p)); # use Rayleigh fading by default
+                random_normal = np.random.randn if rng is None else rng.standard_normal
+                self.chan_coef = sqrt(1/2/p)*(random_normal(p)+1j*random_normal(p)); # use Rayleigh fading by default
             self.cp_len = np.max(self.delay_taps).astype(int);
         else:
             raise Exception("The given CSI is not recognised.");
@@ -230,7 +237,7 @@ class OTFS(MatlabFuncHelper):
     pass the channel
     @No: noise power (a scalar) or a given noise vector. [1]: the same noise power for all, [(batch_size), 1]: the same noise for all data in the same batch, [n] & [batch_size, n]: manuall defined noise(if you use batched data)
     '''
-    def passChannel(self, No):
+    def passChannel(self, No, *, rng=None):
         # input check        
         No = self.squeeze(np.asarray(No));
         if np.any(No < 0):
@@ -270,10 +277,12 @@ class OTFS(MatlabFuncHelper):
         # add noise
         if No.ndim == 0:
             if No > 0:
-                noise = sqrt(No/2)*(self.randn(self.sig_len) + 1j*self.randn(self.sig_len));
+                random_normal = np.random.randn if rng is None else rng.standard_normal
+                noise = sqrt(No/2)*(random_normal(self.sig_len) + 1j*random_normal(self.sig_len));
                 s_chan = s_chan + noise;
         elif self.batch_size is not self.BATCH_SIZE_NO and No.ndim == 1:
-            noise = sqrt(No[:, np.newaxis]/2)*(self.randn(self.sig_len) + 1j*self.randn(self.sig_len));
+            random_normal = np.random.randn if rng is None else rng.standard_normal
+            noise = sqrt(No[:, np.newaxis]/2)*(random_normal(self.sig_len) + 1j*random_normal(self.sig_len));
             s_chan = s_chan + noise;
         elif self.isvector(No):
             s_chan = s_chan + No;
@@ -398,19 +407,25 @@ class OTFS(MatlabFuncHelper):
     '''
     shuffle and select top n elements' indices 
     '''
-    def shufSelectTopNIdx(self, taps_max, p, *, isSameDD=False):
+    def shufSelectTopNIdx(self, taps_max, p, *, isSameDD=False, rng=None):
+        permutation = (
+            np.random.permutation
+            if rng is None
+            else rng.permutation
+        )
+
         if self.batch_size == self.BATCH_SIZE_NO:
-            taps_idx_chaotic = np.random.permutation(taps_max);
+            taps_idx_chaotic = permutation(taps_max);
             taps_selected_idx = np.take(taps_idx_chaotic, np.arange(p));
         else:
             if isSameDD:
-                taps_idx_chaotic = np.random.permutation(taps_max);
+                taps_idx_chaotic = permutation(taps_max);
                 taps_selected_idx = np.take(taps_idx_chaotic, np.arange(p));
                 taps_selected_idx = np.tile(taps_selected_idx, (self.batch_size, 1));
             else:
                 taps_selected_idx = np.zeros((self.batch_size, p)).astype(int);
                 for batch_id in range(self.batch_size):
-                    taps_idx_chaotic = np.random.permutation(taps_max);
+                    taps_idx_chaotic = permutation(taps_max);
                     taps_selected_idx[batch_id, :] = np.take(taps_idx_chaotic, np.arange(p));
         return taps_selected_idx;
     

@@ -321,16 +321,17 @@ def evaluate(
             target_np.imag >= 0
         )
 
-        bit_error_mask = (
-            predicted_real != target_real
-        ) | (
-            predicted_imag != target_imag
+        bit_error_mask = np.stack(
+            (
+                predicted_real != target_real,
+                predicted_imag != target_imag,
+            ),
+            axis=-1,
         )
 
-        symbol_error_mask = (
-            bit_error_mask[..., 0]
-            if bit_error_mask.ndim > 1
-            else bit_error_mask
+        symbol_error_mask = np.any(
+            bit_error_mask,
+            axis=-1,
         )
 
         batch_bit_errors = int(

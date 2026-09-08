@@ -268,3 +268,63 @@ dnn:
 
     # Per-test-sample evaluation results.
     per_sample_file: "per_sample_results.csv"
+
+
+# MMSE RESIDUAL MODEL
+
+
+residual:
+
+  hidden_dims:
+    - 256
+    - 128
+
+  dropout: 0.10
+
+  training:
+    epochs: 100
+    batch_size: 32
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    gradient_clip_norm: 1.0
+    early_stopping_patience: 10
+    early_stopping_min_delta: 0.000001
+    scheduler_factor: 0.5
+    scheduler_patience: 4
+
+  output:
+    directory: "experiments/dnn_residual"
+    checkpoint_file: "best_model.pt"
+    history_file: "training_history.csv"
+    evaluation_file: "evaluation_results.json"
+    per_sample_file: "per_sample_results.csv"
+
+
+# INFORMED MMSE RESIDUAL MODEL
+
+
+informed_residual:
+
+  hidden_dims:
+    - 256
+    - 128
+
+  dropout: 0.10
+
+  training:
+    epochs: 100
+    batch_size: 32
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    gradient_clip_norm: 1.0
+    early_stopping_patience: 10
+    early_stopping_min_delta: 0.000001
+    scheduler_factor: 0.5
+    scheduler_patience: 4
+
+  output:
+    directory: "experiments/dnn_informed_residual"
+    checkpoint_file: "best_model.pt"
+    history_file: "training_history.csv"
+    evaluation_file: "evaluation_results.json"
+    per_sample_file: "per_sample_results.csv"

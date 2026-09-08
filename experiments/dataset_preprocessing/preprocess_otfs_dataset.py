@@ -331,6 +331,7 @@ def validate_sample_files(
         "rx_dd",
         "tx_dd",
         "h_dd",
+        "h_hat",
         "his",
         "lis",
         "kis",
@@ -365,6 +366,7 @@ def validate_sample_files(
             rx_dd = data["rx_dd"]
             tx_dd = data["tx_dd"]
             h_dd = data["h_dd"]
+            h_hat = data["h_hat"]
 
             his = data["his"]
             lis = data["lis"]
@@ -398,6 +400,15 @@ def validate_sample_files(
                     f"{filename}: {h_dd.shape}"
                 )
 
+            if tuple(h_hat.shape) != (
+                expected_channel_shape.rows,
+                expected_channel_shape.cols,
+            ):
+                raise ValueError(
+                    f"Invalid h_hat shape in "
+                    f"{filename}: {h_hat.shape}"
+                )
+
             if his.shape != (
                 expected_num_paths,
             ):
@@ -428,6 +439,7 @@ def validate_sample_files(
                 "rx_dd": rx_dd,
                 "tx_dd": tx_dd,
                 "h_dd": h_dd,
+                "h_hat": h_hat,
                 "his": his,
                 "lis": lis,
                 "kis": kis,
