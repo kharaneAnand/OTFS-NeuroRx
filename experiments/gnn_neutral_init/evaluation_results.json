@@ -1,0 +1,72 @@
+{
+  "seed": 42,
+  "test_samples": 135,
+  "edge_threshold": "0.01 * max(abs(H_hat)) per sample",
+  "message_passing_layers": 4,
+  "baseline": "OAMP-DL",
+  "oamp_dl": {
+    "ber": 0.03296095008051529,
+    "ser": 0.06344605475040255,
+    "nmse": 0.10174544213735098,
+    "ber_std": 0.039039313457853185,
+    "ser_std": 0.07354309768060621,
+    "nmse_std": 0.11675049854575287,
+    "ber_ci95": 0.006585539495655278,
+    "ser_ci95": 0.01240598083087037,
+    "nmse_ci95": 0.019694634746601415
+  },
+  "gnn": {
+    "mmse": {
+      "ber": 0.03686594202898551,
+      "ser": 0.07073268921095009,
+      "nmse": 0.11198723170544124,
+      "ber_std": 0.039220221432225345,
+      "ser_std": 0.07330565144998459,
+      "nmse_std": 0.11297577344371654,
+      "ber_ci95": 0.006616056851233087,
+      "ser_ci95": 0.01236592604016455,
+      "nmse_ci95": 0.019057876590709687
+    },
+    "neutral_zero": {
+      "ber": 0.042039049919484706,
+      "ser": 0.08083735909822863,
+      "nmse": 0.12731904198795005,
+      "ber_std": 0.039577568881473756,
+      "ser_std": 0.073809666266942,
+      "nmse_std": 0.11268452791220898,
+      "ber_ci95": 0.006676337771471034,
+      "ser_ci95": 0.012450948270052173,
+      "nmse_ci95": 0.01900874639909536
+    }
+  },
+  "success_checks": {
+    "mmse": {
+      "overall_beats_oamp_dl_all_metrics": false,
+      "locked_regime_beats_oamp_dl_all_metrics": false,
+      "locked_regime": {
+        "snr_db": [
+          10
+        ],
+        "velocity_kmh": [
+          120,
+          500
+        ],
+        "definition": "Pre-registered low-SNR high-mobility regime"
+      }
+    },
+    "neutral_zero": {
+      "overall_beats_oamp_dl_all_metrics": false,
+      "locked_regime_beats_oamp_dl_all_metrics": false,
+      "locked_regime": {
+        "snr_db": [
+          10
+        ],
+        "velocity_kmh": [
+          120,
+          500
+        ],
+        "definition": "Pre-registered low-SNR high-mobility regime"
+      }
+    }
+  }
+}

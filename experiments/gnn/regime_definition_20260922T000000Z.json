@@ -1,0 +1,18 @@
+{
+  "experiment": "Project B OTFS GNN receiver",
+  "registered_at_utc": "2026-09-22T00:00:00Z",
+  "regime_name": "low_snr_high_mobility",
+  "snr_db": [10],
+  "velocity_kmh": [120, 500],
+  "success_criterion": "A GNN variant must improve BER, SER, and NMSE versus OAMP-DL across the complete locked regime, not merely one condition or one metric.",
+  "overall_criterion": "A GNN variant must improve BER, SER, and NMSE versus OAMP-DL across all 135 test samples.",
+  "edge_threshold": {
+    "definition": "tau = 0.01 * max(abs(H_hat)) within each sample",
+    "reason": "A fixed 1% relative threshold preserves meaningful channel couplings while removing numerical-scale entries; the fraction is registered before training and is not fitted to evaluation results."
+  },
+  "inputs": ["rx_dd", "H_hat", "per_sample_noise_power"],
+  "forbidden_input": "h_dd",
+  "split": {"train": 630, "validation": 135, "test": 135},
+  "seed": 42,
+  "initialization_ablations": ["mmse", "neutral_zero"]
+}

@@ -354,3 +354,36 @@ oamp_dl:
     history_file: "training_history.csv"
     evaluation_file: "evaluation_results.json"
     per_sample_file: "per_sample_results.csv"
+
+
+# GNN MODEL
+
+
+gnn:
+
+  # Fixed before training. This is the 1% of the maximum H_hat
+  # magnitude graph-connectivity threshold, not a result-tuned value.
+  edge_threshold_fraction_of_max: 0.01
+
+  message_passing_layers: 4
+  hidden_features: 32
+
+  training:
+    epochs: 100
+    batch_size: 2
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    gradient_clip_norm: 1.0
+    early_stopping_patience: 10
+    early_stopping_min_delta: 0.000001
+    scheduler_factor: 0.5
+    scheduler_patience: 4
+
+  output:
+    mmse_directory: "experiments/gnn_mmse_init"
+    neutral_directory: "experiments/gnn_neutral_init"
+    checkpoint_file: "best_model.pt"
+    history_file: "training_history.csv"
+    evaluation_file: "evaluation_results.json"
+    per_sample_file: "per_sample_results.csv"
+    per_condition_file: "per_condition_results.csv"
