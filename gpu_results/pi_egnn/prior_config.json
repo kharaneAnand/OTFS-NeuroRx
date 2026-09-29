@@ -1,0 +1,5 @@
+{
+  "oamp_prior_iterations": 3,
+  "selection_rationale": "Validation-only 3/5/10 iteration results in prior_iteration_sanity.json were statistically indistinguishable; lock the simplest setting because iterations beyond 3 showed no observed accuracy benefit, not as a speed claim.",
+  "evidence_file": "experiments/pi_egnn/prior_iteration_sanity.json"
+}

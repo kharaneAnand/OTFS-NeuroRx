@@ -1,0 +1,46 @@
+{
+  "registration_record": "Commit this file before any training; the commit timestamp is the authoritative preregistration time.",
+  "experiment": "PI-EGNN replaces the plain MMSE-initialized GNN as bank slot three",
+  "dataset": {
+    "samples": 900,
+    "split": "630/135/135",
+    "seed": 42,
+    "test_conditions": "SNR {10,15,20} dB x velocity {30,120,500} km/h; 15 test samples per condition"
+  },
+  "inputs": ["rx_dd", "H_hat", "configured per-sample noise power"],
+  "forbidden_input": "true h_dd",
+  "architecture": {
+    "graph": "existing bipartite graph and 0.01 * max(abs(H_hat)) active-edge threshold",
+    "initialization": "MMSE symbol estimate, preserving the original GNN initialization",
+    "prior_iterations": 3,
+    "prior_iteration_rationale": "Validation-only 3/5/10 iteration results in prior_iteration_sanity.json are statistically indistinguishable; iterations beyond 3 showed no observed accuracy benefit, so 3 is locked as the simplest setting. This is not a speed-tradeoff claim.",
+    "effective_variance": "For W = alpha (H_hat^H H_hat + sigma^2 I)^-1 H_hat^H, alpha = n / Re tr(W0 H_hat), W = alpha W0, z_t = x_(t-1) + W(y - H_hat x_(t-1)); tau_t = max(eps, mean_k |z_t,k - x_(t-1),k|^2 + sigma^2 mean_ij |Re[(W W^H)_ij]|). This matches the repository analytical OAMP variance calculation.",
+    "reliability": "rho_t = sigma^2 / (sigma^2 + tau_t), broadcast to symbol nodes; bounded in [0,1] and larger for a smaller effective variance relative to configured noise.",
+    "qpsk_confidence": "For Q = {(+/-1 +/- j)/sqrt(2)}, p(q|z_t,i) = exp(-|z_t,i-q|^2/tau_t) / sum_(q' in Q) exp(-|z_t,i-q'|^2/tau_t); confidence_i = max_(q in Q) p(q|z_t,i).",
+    "attention": "Learned bidirectional softmax weights over active bipartite edges only; inactive edges receive exactly zero weight. Complexity is linear in active edge count for fixed feature width; this is sparse local attention, not a literal Linformer projection.",
+    "prior_features": ["OAMP estimate real", "OAMP estimate imaginary", "OAMP estimate magnitude", "log(1+tau_3)", "rho_3", "QPSK max posterior confidence"],
+    "unchanged_base_features": ["MMSE estimate real", "MMSE estimate imaginary", "H_hat column norm", "active-edge column degree"]
+  },
+  "pre_registered_regimes": {
+    "A_low_snr_broad": {
+      "conditions": [
+        {"snr_db": 10, "velocity_kmh": 30},
+        {"snr_db": 10, "velocity_kmh": 120},
+        {"snr_db": 10, "velocity_kmh": 500}
+      ]
+    },
+    "B_120_kmh_all_snr": {
+      "conditions": [
+        {"snr_db": 10, "velocity_kmh": 120},
+        {"snr_db": 15, "velocity_kmh": 120},
+        {"snr_db": 20, "velocity_kmh": 120}
+      ]
+    }
+  },
+  "success_bar": {
+    "first": "PI-EGNN must have lower overall test BER, SER, and NMSE than the original MMSE-initialized GNN.",
+    "second": "PI-EGNN must have lower overall test BER, SER, and NMSE than OAMP-DL, or lower BER, SER, and NMSE in every condition of at least one pre-registered regime.",
+    "uncertainty": "Report per-condition receiver CI95 and paired PI-EGNN-minus-reference CI95. The pre-registered pass/fail comparison remains the strict per-condition mean comparison; paired intervals are also flagged as evidence and do not silently alter the success criterion."
+  },
+  "artifacts": "All PI-EGNN checkpoints, metrics, and diagnostic outputs go under experiments/pi_egnn; existing experiment artifacts are read-only."
+}

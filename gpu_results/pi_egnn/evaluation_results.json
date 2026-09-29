@@ -1,0 +1,175 @@
+{
+  "seed": 42,
+  "test_samples": 135,
+  "prior_iterations": 3,
+  "attention": "masked bidirectional softmax over active edges only",
+  "edge_threshold": "0.0100 * max(abs(H_hat)) per sample",
+  "ci95_method": "sample mean +/- 1.96 * sample standard deviation / sqrt(n); paired sample-level deltas",
+  "overall": {
+    "pi_egnn": {
+      "ber": 0.04002616747181964,
+      "ber_ci95": 0.006635875111832869,
+      "ber_ci95_low": 0.03339029235998677,
+      "ber_ci95_high": 0.04666204258365251,
+      "ser": 0.0772342995169082,
+      "ser_ci95": 0.012471554222025115,
+      "ser_ci95_low": 0.06476274529488309,
+      "ser_ci95_high": 0.08970585373893332,
+      "nmse": 0.12232719246142855,
+      "nmse_ci95": 0.01929713523620956,
+      "nmse_ci95_low": 0.10303005722521899,
+      "nmse_ci95_high": 0.1416243276976381
+    },
+    "original_gnn": {
+      "ber": 0.03686594202898545,
+      "ber_ci95": 0.006616056851233087,
+      "ber_ci95_low": 0.030249885177752366,
+      "ber_ci95_high": 0.04348199888021854,
+      "ser": 0.07073268921095001,
+      "ser_ci95": 0.012365926040164548,
+      "ser_ci95_low": 0.05836676317078546,
+      "ser_ci95_high": 0.08309861525111456,
+      "nmse": 0.11198723170544123,
+      "nmse_ci95": 0.019057876590709687,
+      "nmse_ci95_low": 0.09292935511473153,
+      "nmse_ci95_high": 0.1310451082961509
+    },
+    "oamp_dl": {
+      "ber": 0.03296095008051524,
+      "ber_ci95": 0.006585539495655278,
+      "ber_ci95_low": 0.026375410584859964,
+      "ber_ci95_high": 0.03954648957617052,
+      "ser": 0.0634460547504025,
+      "ser_ci95": 0.01240598083087037,
+      "ser_ci95_low": 0.051040073919532136,
+      "ser_ci95_high": 0.07585203558127288,
+      "nmse": 0.10174544213735096,
+      "nmse_ci95": 0.019694634746601415,
+      "nmse_ci95_low": 0.08205080739074955,
+      "nmse_ci95_high": 0.12144007688395236
+    }
+  },
+  "overall_success_checks": {
+    "pi_egnn_beats_original_gnn_all_metrics": false,
+    "pi_egnn_beats_oamp_dl_all_metrics": false
+  },
+  "enhancement_validity": false,
+  "oamp_dl_bank_win_overall_or_registered_regime": false,
+  "earns_bank_slot": false,
+  "regimes": {
+    "original_gnn": {
+      "A_low_snr_broad": {
+        "conditions": [
+          {
+            "snr_db": 10,
+            "velocity_kmh": 30,
+            "samples": 15
+          },
+          {
+            "snr_db": 10,
+            "velocity_kmh": 120,
+            "samples": 15
+          },
+          {
+            "snr_db": 10,
+            "velocity_kmh": 500,
+            "samples": 15
+          }
+        ],
+        "beats_reference_all_metrics_all_conditions": false,
+        "paired_ci_supports_reference_all_metrics_all_conditions": false,
+        "confidence_intervals": "Per-condition receiver mean CI95 and paired PI-EGNN-minus-reference CI95 are in per_condition_results.csv.",
+        "hypothesis": "SNR 10 dB at 30, 120, and 500 km/h"
+      },
+      "B_120_kmh_all_snr": {
+        "conditions": [
+          {
+            "snr_db": 10,
+            "velocity_kmh": 120,
+            "samples": 15
+          },
+          {
+            "snr_db": 15,
+            "velocity_kmh": 120,
+            "samples": 15
+          },
+          {
+            "snr_db": 20,
+            "velocity_kmh": 120,
+            "samples": 15
+          }
+        ],
+        "beats_reference_all_metrics_all_conditions": false,
+        "paired_ci_supports_reference_all_metrics_all_conditions": false,
+        "confidence_intervals": "Per-condition receiver mean CI95 and paired PI-EGNN-minus-reference CI95 are in per_condition_results.csv.",
+        "hypothesis": "120 km/h at 10, 15, and 20 dB"
+      }
+    },
+    "oamp_dl": {
+      "A_low_snr_broad": {
+        "conditions": [
+          {
+            "snr_db": 10,
+            "velocity_kmh": 30,
+            "samples": 15
+          },
+          {
+            "snr_db": 10,
+            "velocity_kmh": 120,
+            "samples": 15
+          },
+          {
+            "snr_db": 10,
+            "velocity_kmh": 500,
+            "samples": 15
+          }
+        ],
+        "beats_reference_all_metrics_all_conditions": false,
+        "paired_ci_supports_reference_all_metrics_all_conditions": false,
+        "confidence_intervals": "Per-condition receiver mean CI95 and paired PI-EGNN-minus-reference CI95 are in per_condition_results.csv.",
+        "hypothesis": "SNR 10 dB at 30, 120, and 500 km/h"
+      },
+      "B_120_kmh_all_snr": {
+        "conditions": [
+          {
+            "snr_db": 10,
+            "velocity_kmh": 120,
+            "samples": 15
+          },
+          {
+            "snr_db": 15,
+            "velocity_kmh": 120,
+            "samples": 15
+          },
+          {
+            "snr_db": 20,
+            "velocity_kmh": 120,
+            "samples": 15
+          }
+        ],
+        "beats_reference_all_metrics_all_conditions": false,
+        "paired_ci_supports_reference_all_metrics_all_conditions": false,
+        "confidence_intervals": "Per-condition receiver mean CI95 and paired PI-EGNN-minus-reference CI95 are in per_condition_results.csv.",
+        "hypothesis": "120 km/h at 10, 15, and 20 dB"
+      }
+    }
+  },
+  "inference_timing": {
+    "prior_feature_extraction_seconds_per_sample": {
+      "observation_build_seconds": 0.0027348981238901615,
+      "mmse_seconds": 0.02590494230389595,
+      "oamp_prior_seconds": 0.03540315851569176,
+      "numpy_solve_seconds": 0.026657454669475555,
+      "oamp_operator_setup_seconds": 0.007668978068977594,
+      "oamp_iteration_seconds": 0.00039676809683442116,
+      "feature_compute_seconds": 0.06405439972877502
+    },
+    "dataset_loading_and_graph_packing_seconds_per_sample": 0.007440761932068401,
+    "pi_egnn_model_seconds_per_sample": 0.004680081581075986,
+    "pi_egnn_end_to_end_seconds_per_sample_including_prior": 0.0761752432419194,
+    "oamp_dl_seconds_per_sample_from_existing_evaluation": 0.0057360503703320215,
+    "cache_used_for_features": true,
+    "feature_cache_rebuild_during_evaluation": false,
+    "timing_note": "PI-EGNN end-to-end is the measured per-sample feature-generation time (observation extraction + MMSE + OAMP prior) plus model forward time; OAMP-DL timing is read from its existing full-test evaluation artifact."
+  }
+}

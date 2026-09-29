@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "feature_schema_version": 2,
+  "alpha": 0.05,
+  "reference_split": "train",
+  "replay_split": "validation",
+  "calibration_scope": {
+    "runtime_default": "Fixed scalar feature map; Bonferroni alpha allocation across all configured contexts and scores.",
+    "known_context_replay": "One trusted active context; alpha allocated across its score monitors only, with no combined false-alarm bound across context changes."
+  },
+  "pooled_context": "pooled",
+  "score_names": [
+    "rx_log_power",
+    "rx_peak_to_rms",
+    "rx_shape_entropy",
+    "channel_log_energy",
+    "channel_active_fraction",
+    "channel_energy_spread"
+  ],
+  "rank_portfolio": ["order", "dispersion"],
+  "context_fields": ["snr_db", "velocity_kmh"],
+  "input_contract": ["rx_dd", "h_hat", "optional independently known regime metadata"],
+  "forbidden_inputs": ["tx_dd", "h_dd"],
+  "controlled_shift": {
+    "name": "estimated-channel amplitude multiplied by 1.5",
+    "purpose": "Pipeline diagnostic only; not a physical-channel benchmark or formal power guarantee."
+  },
+  "limitations": [
+    "Anytime marginal false-alarm control assumes the fixed score map and independent calibration and frame-level stream observations are i.i.d. under the null.",
+    "No shift alarm does not certify receiver accuracy.",
+    "Validation has only 15 samples per regime and cannot establish the advertised false-alarm probability empirically.",
+    "A context-specific reference must be selected using independently trusted context; feature-inferred context does not inherit this guarantee."
+  ]
+}

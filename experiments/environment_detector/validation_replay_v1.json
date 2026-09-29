@@ -1,0 +1,300 @@
+{
+  "training_started": false,
+  "test_split_used": false,
+  "reference_split": "train",
+  "replay_split": "validation",
+  "frames": 135,
+  "alpha_per_known_context": 0.05,
+  "context_score_family_size": 6,
+  "alpha_note": "This replay uses one trusted context reference at a time. The runtime default remains family-wise over all configured references unless explicitly constructed in per-context mode.",
+  "feature_names": [
+    "rx_log_power",
+    "rx_peak_to_rms",
+    "rx_shape_entropy",
+    "channel_log_energy",
+    "channel_active_fraction",
+    "channel_energy_spread"
+  ],
+  "samples_per_context_are_small_note": "There are only 15 validation frames per condition; this replay is a smoke check, not an empirical proof of the nominal false-alarm rate.",
+  "conditions": [
+    {
+      "snr_db": 10.0,
+      "velocity_kmh": 30.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.36542730042335847,
+        "rx_peak_to_rms": 1.3375163779361396,
+        "rx_shape_entropy": 0.8910884903511825,
+        "channel_log_energy": 0.12455081737224682,
+        "channel_active_fraction": 0.47390635169074835,
+        "channel_energy_spread": 0.1281401195392905
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": 0.4191737312673237,
+        "rx_peak_to_rms": 1.2177918078552357,
+        "rx_shape_entropy": 0.4761735027443369,
+        "channel_log_energy": 3.758468830678086,
+        "channel_active_fraction": 1.7225722388210127,
+        "channel_energy_spread": -0.04718187438601473
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    },
+    {
+      "snr_db": 10.0,
+      "velocity_kmh": 120.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.10548640591066649,
+        "rx_peak_to_rms": 1.378125201840613,
+        "rx_shape_entropy": 0.21228793552428937,
+        "channel_log_energy": 0.11474099624953027,
+        "channel_active_fraction": 0.6770548430829629,
+        "channel_energy_spread": 0.6622818745289619
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": -1.4373760922456869,
+        "rx_peak_to_rms": 1.793861025953655,
+        "rx_shape_entropy": -1.3416112881424656,
+        "channel_log_energy": 1.8329924030367737,
+        "channel_active_fraction": -0.05693014752378589,
+        "channel_energy_spread": -0.07019727918951191
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    },
+    {
+      "snr_db": 10.0,
+      "velocity_kmh": 500.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.19566914331932794,
+        "rx_peak_to_rms": 0.009747753295231032,
+        "rx_shape_entropy": 0.0,
+        "channel_log_energy": 0.7061957848177377,
+        "channel_active_fraction": 0.6955421113115198,
+        "channel_energy_spread": 0.13182861495423814
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": 0.06449574560907556,
+        "rx_peak_to_rms": -0.3376333623297745,
+        "rx_shape_entropy": -1.0232760714833846,
+        "channel_log_energy": 4.343930956337215,
+        "channel_active_fraction": 0.3536897359910435,
+        "channel_energy_spread": -0.2833180409702897
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    },
+    {
+      "snr_db": 15.0,
+      "velocity_kmh": 30.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.0,
+        "rx_peak_to_rms": 0.4280754044294649,
+        "rx_shape_entropy": 0.0,
+        "channel_log_energy": 0.11656229748610736,
+        "channel_active_fraction": 0.0,
+        "channel_energy_spread": 0.0
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": -0.46198061419017344,
+        "rx_peak_to_rms": 0.6331395536344991,
+        "rx_shape_entropy": -1.0886380210864592,
+        "channel_log_energy": 3.1576946619535597,
+        "channel_active_fraction": -1.087372539620396,
+        "channel_energy_spread": -0.9104502828627832
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    },
+    {
+      "snr_db": 15.0,
+      "velocity_kmh": 120.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.6464406149614791,
+        "rx_peak_to_rms": 1.217450557436469,
+        "rx_shape_entropy": 0.0,
+        "channel_log_energy": 0.009157382585321283,
+        "channel_active_fraction": 0.25028977440838873,
+        "channel_energy_spread": 0.2219291601699842
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": 1.1994807637204317,
+        "rx_peak_to_rms": 1.7239301837887768,
+        "rx_shape_entropy": -1.5285712151673703,
+        "channel_log_energy": 2.702272687070276,
+        "channel_active_fraction": 0.4592142361539514,
+        "channel_energy_spread": -0.13242440793029397
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    },
+    {
+      "snr_db": 15.0,
+      "velocity_kmh": 500.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.0,
+        "rx_peak_to_rms": 0.0963255361165557,
+        "rx_shape_entropy": 1.0246497719114016,
+        "channel_log_energy": 0.0,
+        "channel_active_fraction": 0.29096683600071904,
+        "channel_energy_spread": 0.5915608242950653
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": -0.08672140169502296,
+        "rx_peak_to_rms": -0.09394188709534845,
+        "rx_shape_entropy": 1.7619155582324835,
+        "channel_log_energy": 3.2719548994924965,
+        "channel_active_fraction": -1.0756744950290686,
+        "channel_energy_spread": 1.5702841649120307
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    },
+    {
+      "snr_db": 20.0,
+      "velocity_kmh": 30.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.8727343257761603,
+        "rx_peak_to_rms": 0.3713711523081141,
+        "rx_shape_entropy": 1.2640400785771893,
+        "channel_log_energy": 1.0227488315805218,
+        "channel_active_fraction": 0.45882270420270965,
+        "channel_energy_spread": 1.6488368391591903
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": 2.151019446217388,
+        "rx_peak_to_rms": -0.20264147501713525,
+        "rx_shape_entropy": 2.730948206237549,
+        "channel_log_energy": 4.537486190990012,
+        "channel_active_fraction": 0.7949278077608813,
+        "channel_energy_spread": 3.5889038515132077
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    },
+    {
+      "snr_db": 20.0,
+      "velocity_kmh": 120.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.31888410482175644,
+        "rx_peak_to_rms": 1.0811981667523707,
+        "rx_shape_entropy": 0.5454374357341202,
+        "channel_log_energy": 0.23145370101617535,
+        "channel_active_fraction": 0.22718300078930997,
+        "channel_energy_spread": 0.5334221943839622
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": -0.4875580288999472,
+        "rx_peak_to_rms": 0.514194342094264,
+        "rx_shape_entropy": 0.4940607481319762,
+        "channel_log_energy": 1.1749483496827149,
+        "channel_active_fraction": -1.3866292035208658,
+        "channel_energy_spread": 0.5631327620371372
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    },
+    {
+      "snr_db": 20.0,
+      "velocity_kmh": 500.0,
+      "validation_frames": 15,
+      "nominal_alarm_count": 0,
+      "nominal_alarm_rate": 0.0,
+      "synthetic_shift": "estimated-channel amplitude multiplied by 1.5",
+      "synthetic_shift_alarm_count": 0,
+      "first_synthetic_shift_alarm_frame": null,
+      "max_nominal_log_wealth_by_score": {
+        "rx_log_power": 0.0,
+        "rx_peak_to_rms": 0.06021212623676497,
+        "rx_shape_entropy": 0.0,
+        "channel_log_energy": 0.0,
+        "channel_active_fraction": 0.0,
+        "channel_energy_spread": 0.11430503503838718
+      },
+      "max_shifted_log_wealth_by_score": {
+        "rx_log_power": -0.5099564074975494,
+        "rx_peak_to_rms": -0.035875487521363936,
+        "rx_shape_entropy": -1.246255825007399,
+        "channel_log_energy": 3.941669472120523,
+        "channel_active_fraction": 0.4481879715165288,
+        "channel_energy_spread": -0.6402816533110863
+      },
+      "log_alarm_threshold": 4.787491742782046,
+      "synthetic_test_is_physical_evidence": false,
+      "alpha_scope": "per known context; no combined guarantee across regime changes",
+      "alpha_per_reference_score_monitor": 0.008333333333333333,
+      "alpha_threshold_per_monitor": 120.0
+    }
+  ]
+}

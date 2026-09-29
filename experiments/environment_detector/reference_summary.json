@@ -1,0 +1,36 @@
+{
+  "reference_split": "train",
+  "reference_samples": 630,
+  "feature_names": [
+    "rx_log_power",
+    "rx_peak_to_rms",
+    "rx_shape_entropy",
+    "channel_log_energy",
+    "channel_active_fraction",
+    "channel_energy_spread"
+  ],
+  "feature_schema_version": 2,
+  "feature_shape": [
+    630,
+    6
+  ],
+  "samples_per_context": {
+    "snr=10|velocity=120": 70,
+    "snr=10|velocity=30": 70,
+    "snr=10|velocity=500": 70,
+    "snr=15|velocity=120": 70,
+    "snr=15|velocity=30": 70,
+    "snr=15|velocity=500": 70,
+    "snr=20|velocity=120": 70,
+    "snr=20|velocity=30": 70,
+    "snr=20|velocity=500": 70
+  },
+  "pooled_reference_included_at_load_time": true,
+  "inputs_read_from_npz": [
+    "rx_dd",
+    "h_hat"
+  ],
+  "targets_or_true_channel_read": false,
+  "reference_file": "experiments\\environment_detector\\reference_features_v1.npz",
+  "detector_config": "C:\\Users\\aadit\\OTFS-NeuroRx\\configs\\environment_detector_v1.json"
+}
