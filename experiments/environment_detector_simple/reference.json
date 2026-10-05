@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "feature_names": [
+    "estimated_snr_db",
+    "h_hat_residual_nmse_proxy"
+  ],
+  "mean": [
+    15.879478076534571,
+    0.03915913094533374
+  ],
+  "standard_deviation": [
+    3.9354675993590233,
+    0.04438730387427917
+  ],
+  "reference_split": "train",
+  "reference_samples": 630,
+  "inputs_read_from_npz": [
+    "rx_dd",
+    "h_hat"
+  ],
+  "targets_or_true_channel_read": false
+}

@@ -8,7 +8,7 @@ Research code for generating an OTFS dataset, developing neural and model-based 
 - **Current bank default for a fresh decision pipeline:** OAMP-DL. The intent is for a selected/last-used model to become the next default; automatic switching is not implemented yet.
 - **GNN receiver:** the MMSE-initialized GNN remains the original GNN candidate/third receiver. The neutral-initialized GNN is an initialization ablation.
 - **PI-EGNN:** retained as an experimental candidate, but its run is a documented negative and it did not meet the pre-registered bar to replace the original GNN.
-- **Environment-change detector:** implemented as a standalone prototype. It is not connected to receiver selection. Its current validation replay did not detect the tested 1.5x estimated-channel gain perturbation, so do not use it to route live receiver traffic yet.
+- **Environment-change detector:** the active implementation is now a stateless mean/std distance score. The older martingale implementation is preserved for reference but is not the active path. The score is not connected to receiver selection yet.
 - **Adaptation/retraining:** not implemented. This repository currently does not automatically retrain or promote a receiver.
 
 ## Dataset and Fairness
@@ -60,29 +60,48 @@ Measured PI-EGNN end-to-end estimate was about 0.0762 seconds per sample, includ
 
 ## Environment-Change Detector
 
-The detector is a standalone, target-free component in `models/supervisor/`. It is **not** the reliability estimator, does not predict BER, does not select/replace the default receiver, and does not trigger adaptation.
+The active detector is a standalone, target-free, **stateless distance scorer**. It is not the reliability estimator, does not predict BER, does not select/replace the default receiver, and does not trigger adaptation.
 
-It extracts six fixed frame-level features from `rx_dd` and `H_hat`:
+For each frame it reads only `rx_dd`, `H_hat`, configured noise power, and the existing OTFS configuration. It computes two cheap features:
 
-- Received log-power, peak-to-RMS ratio, and grid-shape entropy.
-- Estimated-channel log-energy, active fraction, and row/column energy-spread summary.
+1. `estimated_snr_db`: $10\log_{10}(||y||^2 / ||y - H_hat x_MMSE||^2)$, where `y` is the existing data-domain observation and `x_MMSE` is the existing MMSE estimate.
+2. `h_hat_residual_nmse_proxy`: $||y - H_hat x_MMSE||^2 / ||y||^2$.
 
-It compares a new score against fixed training-split references using a predictive rank martingale with order and dispersion rank features, randomized tie-breaking, and ONS betting. References are available for the pooled data and the nine SNR/velocity contexts. A context reference is valid to select only when the regime ID is independently trusted; an inferred/unsupported context is not equivalent to a trusted regime label.
+The second value is an inference-time reconstruction-error proxy. It is **not** the true `H_hat` NMSE used in offline channel-estimation evaluation, because true `h_dd` is unavailable in a live decision loop.
 
-**Latest observed replay:** unit tests passed (7 tests); the training split built 630 reference feature rows (70 per known context); validation replay used 135 frames, with 15 per context and no test-split access. It raised 0 nominal alarms and 0 alarms for the synthetic 1.5x `H_hat` amplitude perturbation in each context. The strongest shifted channel-log-energy evidence reached about 4.54, below the per-score log threshold about 4.79. Therefore the current replay has not demonstrated sensitivity to this perturbation.
+The reference builder computes the mean and sample standard deviation of these two features from the 630 training samples. Every incoming frame is scored independently:
 
-The replay allocates alpha=0.05 over six features within one trusted context (per-feature threshold 120). This per-context mode has no combined false-alarm guarantee across regime switches. The detector's runtime default is stricter: alpha is allocated across all configured contexts and scores. The reported anytime marginal false-alarm result relies on a fixed feature map and independent, i.i.d. frame-level calibration and stream samples under no change. It does not cover arbitrary temporal dependence, guarantee detection of every shift, prove increased BER, or establish conditional validity for a particular realized reference. Fifteen validation frames per context are not enough to establish operating false-alarm rates or detection delays. Treat this as a research prototype, not a production monitor.
+$$
+D(x) = \sqrt{\frac{1}{2}\sum_i\left(\frac{x_i-\mu_i}{\sigma_i}\right)^2}.
+$$
 
-Files and validation outputs:
+The detector returns this numeric score only. It has no threshold, alarm, memory, latching, sequential betting, or context-specific calibration. A future controller can call it repeatedly and combine it with reliability estimates for KEEP/SWITCH/ADAPT logic.
 
-- Feature map: `models/supervisor/environment_features.py`
-- Sequential monitor: `models/supervisor/environment_change.py`
-- Detector settings: `configs/environment_detector_v1.json`
-- Training-reference builder: `training/supervisor/prepare_environment_detector.py`
-- Validation replay: `evaluations/supervisor/replay_environment_detector.py`
-- Unit tests: `tests/test_environment_detector.py`
-- Latest replay report: `experiments/environment_detector/validation_replay_v1.json`
-- Reference summary/archive: `experiments/environment_detector/reference_summary.json` and `reference_features_v1.npz`
+The previous predictive-rank-martingale implementation remains in `models/supervisor/environment_features.py`, `models/supervisor/environment_change.py`, and the original `training/supervisor/prepare_environment_detector.py` / `evaluations/supervisor/replay_environment_detector.py` files for reference. The new active path is:
+
+- Simple features and stateless reference: `models/supervisor/simple_environment_detector.py`
+- Reference builder: `training/supervisor/prepare_simple_environment_detector.py`
+- Validation evaluator: `evaluations/supervisor/evaluate_simple_environment_detector.py`
+- Unit tests: `tests/test_simple_environment_detector.py`
+- Outputs: `experiments/environment_detector_simple/validation_results.json` and `validation_condition_scores.csv`
+
+The simple validation is independent of calibration: the reference uses training frames, while validation frames receive both a nominal score and a score after independent additive complex corruption of `H_hat`. It also reports nominal mean score for all nine real validation conditions. Both features use the same reconstruction residual; the estimated-SNR feature additionally normalizes by received signal power, so this is informative but not a fully independent two-signal validation. The perturbation check is diagnostic, not a physical-channel benchmark. The score is not guaranteed to increase for every possible environmental change, and no thresholding claim is made yet.
+
+Latest real-condition validation results (15 validation frames per cell):
+
+| SNR (dB) | Velocity (km/h) | Mean distance | Median distance |
+|---:|---:|---:|---:|
+| 10 | 30 | 0.578 | 0.405 |
+| 10 | 120 | 1.021 | 0.739 |
+| 10 | 500 | 0.689 | 0.502 |
+| 15 | 30 | 0.591 | 0.362 |
+| 15 | 120 | 0.548 | 0.512 |
+| 15 | 500 | 0.601 | 0.537 |
+| 20 | 30 | 0.781 | 0.844 |
+| 20 | 120 | 0.459 | 0.386 |
+| 20 | 500 | 0.733 | 0.645 |
+
+The highest mean distance is 10 dB / 120 km/h; the lowest is 20 dB / 120 km/h. The lack of a simple monotonic SNR/velocity pattern is expected for a pooled two-feature distance: it reports how unusual the observable proxies are relative to all training frames, not physical severity or receiver error. The complete table is saved in `experiments/environment_detector_simple/validation_condition_scores.csv`.
 
 ## Setup
 
@@ -165,15 +184,15 @@ The checker and replay commands do not train. PI-EGNN outputs are written under 
 
 ### Environment Detector (standalone prototype)
 
-Build references from training frames, run the unit tests, and replay validation frames:
+Build the simple mean/std reference, run its unit tests, and evaluate nominal versus perturbed validation frames:
 
 ```bash
-python -m unittest discover -s tests -p "test_environment_detector.py"
-python training/supervisor/prepare_environment_detector.py --config configs/experiment_v1.yaml
-python evaluations/supervisor/replay_environment_detector.py --config configs/experiment_v1.yaml
+python -m unittest discover -s tests -p "test_simple_environment_detector.py"
+python training/supervisor/prepare_simple_environment_detector.py --config configs/experiment_v1.yaml
+python evaluations/supervisor/evaluate_simple_environment_detector.py --config configs/experiment_v1.yaml
 ```
 
-The builder reads `rx_dd`/`h_hat` only. Rebuild the reference archive whenever `FEATURE_SCHEMA_VERSION` changes. The replay's 1.5x estimated-channel gain perturbation is synthetic diagnostic data only. Do not use the detector for receiver routing until sensitivity, false-alarm behavior, and detection delay are validated on substantially longer independent streams and the assumptions match deployment.
+The simple builder reads `rx_dd`/`h_hat` only. Rebuild the reference whenever the simple feature schema changes. The perturbed validation scores use synthetic additive `H_hat` corruption and are diagnostic data only. Do not use the score for receiver routing until a later controller defines and validates thresholds using independent data.
 
 ## Result Locations
 
@@ -183,7 +202,8 @@ The builder reads `rx_dd`/`h_hat` only. Rebuild the reference archive whenever `
 - OAMP-DL: `experiments/oamp_dl/`
 - Plain OAMP: `experiments/oamp/`
 - PI-EGNN transferred GPU run: `gpu_results/pi_egnn/`
-- Environment detector references/replay: `experiments/environment_detector/`
+- Active simple detector outputs: `experiments/environment_detector_simple/`
+- Preserved martingale detector outputs: `experiments/environment_detector/`
 - Classical baselines: `experiments/baseline/`
 
 Typical model result folders contain `best_model.pt`, `training_history.csv`, `evaluation_results.json`, and per-sample/per-condition CSVs. Do not treat a checkpoint alone as validation; compare its evaluation artifact against the same fixed test split and baselines.

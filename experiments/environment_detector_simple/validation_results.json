@@ -1,0 +1,112 @@
+{
+  "training_started": false,
+  "test_split_used": false,
+  "reference_split": "train",
+  "evaluation_split": "validation",
+  "feature_names": [
+    "estimated_snr_db",
+    "h_hat_residual_nmse_proxy"
+  ],
+  "distance": "sqrt(mean(((feature - training_mean) / training_std)^2))",
+  "channel_noise_relative": 0.5,
+  "nominal_score_mean": 0.6667564868347764,
+  "nominal_score_median": 0.5182901127979824,
+  "perturbed_score_mean": 0.8849379158095395,
+  "perturbed_score_median": 0.7446918148535357,
+  "perturbed_mean_is_higher": true,
+  "validation_frames": 135,
+  "condition_score_rows": [
+    {
+      "snr_db": 10,
+      "velocity_kmh": 30,
+      "samples": 15,
+      "score_mean": 0.5784326907814895,
+      "score_median": 0.40453828906555095,
+      "score_std": 0.4872005167451208,
+      "score_min": 0.18593844428774184,
+      "score_max": 1.66786333514808
+    },
+    {
+      "snr_db": 10,
+      "velocity_kmh": 120,
+      "samples": 15,
+      "score_mean": 1.0213011711141098,
+      "score_median": 0.7393098060864921,
+      "score_std": 1.0270439777523523,
+      "score_min": 0.20248592109799665,
+      "score_max": 4.260019182595654
+    },
+    {
+      "snr_db": 10,
+      "velocity_kmh": 500,
+      "samples": 15,
+      "score_mean": 0.6885384811000087,
+      "score_median": 0.5016449580592851,
+      "score_std": 0.700009714038782,
+      "score_min": 0.1888095921990474,
+      "score_max": 3.074149294860308
+    },
+    {
+      "snr_db": 15,
+      "velocity_kmh": 30,
+      "samples": 15,
+      "score_mean": 0.5906480080100422,
+      "score_median": 0.3615738151216068,
+      "score_std": 0.5663490233118195,
+      "score_min": 0.18587461362979182,
+      "score_max": 2.4009088878451563
+    },
+    {
+      "snr_db": 15,
+      "velocity_kmh": 120,
+      "samples": 15,
+      "score_mean": 0.5482810776462347,
+      "score_median": 0.5120558489022966,
+      "score_std": 0.3078320799801573,
+      "score_min": 0.19388473665385314,
+      "score_max": 1.036776355836029
+    },
+    {
+      "snr_db": 15,
+      "velocity_kmh": 500,
+      "samples": 15,
+      "score_mean": 0.6005934070351082,
+      "score_median": 0.5368487558656804,
+      "score_std": 0.35595899968364614,
+      "score_min": 0.19050199845073218,
+      "score_max": 1.4371552759629942
+    },
+    {
+      "snr_db": 20,
+      "velocity_kmh": 30,
+      "samples": 15,
+      "score_mean": 0.7811478214961244,
+      "score_median": 0.8436055591355289,
+      "score_std": 0.36146542852268265,
+      "score_min": 0.31585061463880026,
+      "score_max": 1.4338170389691867
+    },
+    {
+      "snr_db": 20,
+      "velocity_kmh": 120,
+      "samples": 15,
+      "score_mean": 0.45864802351185435,
+      "score_median": 0.385829545803121,
+      "score_std": 0.30015050443704366,
+      "score_min": 0.18534129092098384,
+      "score_max": 1.1769941221596256
+    },
+    {
+      "snr_db": 20,
+      "velocity_kmh": 500,
+      "samples": 15,
+      "score_mean": 0.7332177008180161,
+      "score_median": 0.6454812050760654,
+      "score_std": 0.4197853229189382,
+      "score_min": 0.20792071804009882,
+      "score_max": 1.44233496899281
+    }
+  ],
+  "feature_dependence_note": "Both features use the same reconstruction residual; estimated_snr_db also divides by received signal power, while the residual proxy does not. The real-condition score table is therefore informative but not an independent validation of two unrelated signals.",
+  "interpretation": "This is an independent validation replay because the reference uses training frames; the perturbation is synthetic and target-free, not a physical-channel result."
+}

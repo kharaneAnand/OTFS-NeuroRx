@@ -6,6 +6,11 @@ from .environment_features import (
     FEATURE_SCHEMA_VERSION,
     extract_environment_features,
 )
+from .simple_environment_detector import (
+    SIMPLE_FEATURE_NAMES,
+    SimpleEnvironmentReference,
+    extract_simple_environment_features,
+)
 
 __all__ = [
     "EnvironmentChangeDetector",
@@ -13,4 +18,7 @@ __all__ = [
     "FEATURE_NAMES",
     "FEATURE_SCHEMA_VERSION",
     "extract_environment_features",
+    "SIMPLE_FEATURE_NAMES",
+    "SimpleEnvironmentReference",
+    "extract_simple_environment_features",
 ]
