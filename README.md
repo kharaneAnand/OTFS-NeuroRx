@@ -194,6 +194,38 @@ python evaluations/supervisor/evaluate_simple_environment_detector.py --config c
 
 The simple builder reads `rx_dd`/`h_hat` only. Rebuild the reference whenever the simple feature schema changes. The perturbed validation scores use synthetic additive `H_hat` corruption and are diagnostic data only. Do not use the score for receiver routing until a later controller defines and validates thresholds using independent data.
 
+## Reliability Detector
+
+The reliability detector is a separate stateless score for each `(frame, receiver)` pair. It is not the controller and does not implement KEEP/SWITCH/ADAPT logic.
+
+For each receiver output it computes two live features:
+
+- `receiver_qpsk_margin`: mean `min(abs(real), abs(imag))` over the receiver's 368 complex QPSK estimates. This is the mean distance to a QPSK decision boundary.
+- `environment_distance`: the existing stateless simple environment score.
+
+Each receiver has its own train-split mean/std reference for these two features. The live reliability distance is:
+
+$$
+R_r = \\sqrt{\\frac{1}{2}\\sum_i\\left(\\frac{x_{r,i}-\\mu_{r,i}}{\\sigma_{r,i}}\\right)^2}.
+$$
+
+Lower distance means the receiver's current behavior is more typical of its own reference. It is not a probability of correctness and has no threshold or persistent state.
+
+The reference builder runs the frozen receivers freshly on train and validation frames. MMSE is recomputed analytically; OAMP-DL, original GNN, and PI-EGNN load their existing checkpoints. No retraining is performed. Existing per-sample CSVs are test-split artifacts and are not used to build the references. Validation BER/SER/NMSE are stored only for the offline correlation audit.
+
+Run the reference generation and offline validation audit:
+
+```bash
+python training/supervisor/prepare_reliability_references.py --config configs/experiment_v1.yaml
+python evaluations/supervisor/evaluate_reliability_detector.py
+```
+
+Outputs are written to `experiments/reliability_detector/`. The audit reports, separately for MMSE, OAMP-DL, original GNN, and PI-EGNN, confidence-vs-BER correlations and reliability-distance-vs-BER/SER/NMSE correlations. Weak or near-zero correlations are valid findings: they mean the two-feature signal is not predictive enough for that receiver, not that the result should be explained away.
+
+Latest validation audit: all four frozen receivers were run freshly on 630 training and 135 validation frames on CPU; no retraining occurred. The receiver-confidence Spearman correlation with BER was MMSE `-0.509`, OAMP-DL `-0.927`, original GNN `-0.956`, and PI-EGNN `-0.948`, which is a strong and correctly directed signal, especially for the learned receivers. The combined reliability-distance Spearman correlation with BER was MMSE `0.112`, OAMP-DL `-0.249`, original GNN `-0.190`, and PI-EGNN `-0.217`; therefore the combined two-feature distance is not yet a trustworthy monotonic reliability score. Its Pearson correlations were positive (0.334, 0.589, 0.614, and 0.571 respectively), but the disagreement with Spearman shows that outliers and nonlinear behavior matter. This is an important negative finding: the QPSK confidence feature is useful, while adding the environment distance naively can weaken rank ordering. Results are in `experiments/reliability_detector/validation_results.json` and `validation_scores.csv`.
+
+MMSE's confidence-BER relationship is meaningfully weaker than the learned receivers'. MMSE is a fixed linear estimator and was not trained to produce calibrated confidence, while the learned receivers' training process implicitly ties confident outputs to correct outputs. The future controller should therefore interpret or weight MMSE's confidence score differently rather than assuming all four receiver confidence signals are equally trustworthy.
+
 ## Result Locations
 
 - DNN: `experiments/dnn/`

@@ -1,0 +1,96 @@
+{
+  "reference_split": "train",
+  "evaluation_split": "validation",
+  "receiver_checkpoints_reused": true,
+  "retraining_performed": false,
+  "live_features": [
+    "receiver_qpsk_margin",
+    "environment_distance"
+  ],
+  "offline_labels_used_only_for_validation": [
+    "ber",
+    "ser",
+    "nmse"
+  ],
+  "correlation_direction_expected": {
+    "confidence_vs_ber": "negative is desirable",
+    "environment_distance_vs_ber": "positive would be desirable, but is tested directly",
+    "confidence_only_z_score_vs_ber": "positive is desirable because higher confidence is better",
+    "distance_vs_ber": "positive is desirable"
+  },
+  "correlations_by_receiver": {
+    "mmse": {
+      "validation_samples": 135,
+      "confidence_vs_ber_pearson": -0.525834937980719,
+      "confidence_vs_ber_spearman": -0.5086194874687551,
+      "environment_distance_vs_ber_pearson": 0.24880537667601965,
+      "environment_distance_vs_ber_spearman": -0.06178463273347192,
+      "environment_distance_vs_ser_spearman": -0.060715088221669995,
+      "environment_distance_vs_nmse_spearman": -0.08514291288654766,
+      "distance_vs_ber_pearson": 0.33372512786560593,
+      "distance_vs_ber_spearman": 0.11240266267760966,
+      "distance_vs_ser_spearman": 0.11380755578958085,
+      "distance_vs_nmse_spearman": 0.09008877182713883,
+      "confidence_mean_low_ber_quartile": 0.5015790519834695,
+      "confidence_mean_high_ber_quartile": 0.4182833888350224,
+      "distance_mean_low_ber_quartile": 0.763865207080576,
+      "distance_mean_high_ber_quartile": 0.95912151425869,
+      "confidence_only_z_score_vs_ber_spearman": -0.5086194874687551
+    },
+    "oamp_dl": {
+      "validation_samples": 135,
+      "confidence_vs_ber_pearson": -0.9095796054124043,
+      "confidence_vs_ber_spearman": -0.9273183110923853,
+      "environment_distance_vs_ber_pearson": 0.5182749624859615,
+      "environment_distance_vs_ber_spearman": -0.08239290911071984,
+      "environment_distance_vs_ser_spearman": -0.08220048314052072,
+      "environment_distance_vs_nmse_spearman": -0.10312164666861771,
+      "distance_vs_ber_pearson": 0.5886655607508895,
+      "distance_vs_ber_spearman": -0.2488737929700912,
+      "distance_vs_ser_spearman": -0.24823538153897773,
+      "distance_vs_nmse_spearman": -0.27609501512047613,
+      "confidence_mean_low_ber_quartile": 0.6914410801494822,
+      "confidence_mean_high_ber_quartile": 0.5476965027696946,
+      "distance_mean_low_ber_quartile": 0.7640363459092335,
+      "distance_mean_high_ber_quartile": 0.945564665595538,
+      "confidence_only_z_score_vs_ber_spearman": -0.9273183110923853
+    },
+    "original_gnn": {
+      "validation_samples": 135,
+      "confidence_vs_ber_pearson": -0.948193329718137,
+      "confidence_vs_ber_spearman": -0.956245692524375,
+      "environment_distance_vs_ber_pearson": 0.49938064883284733,
+      "environment_distance_vs_ber_spearman": -0.10434473646696818,
+      "environment_distance_vs_ser_spearman": -0.10432328031543339,
+      "environment_distance_vs_nmse_spearman": -0.09961954931226223,
+      "distance_vs_ber_pearson": 0.6140870102595667,
+      "distance_vs_ber_spearman": -0.19028947835520565,
+      "distance_vs_ser_spearman": -0.18998532627535952,
+      "distance_vs_nmse_spearman": -0.19620037069554191,
+      "confidence_mean_low_ber_quartile": 0.6907993651725151,
+      "confidence_mean_high_ber_quartile": 0.5353886187076569,
+      "distance_mean_low_ber_quartile": 0.7353736358321523,
+      "distance_mean_high_ber_quartile": 0.9504839270786001,
+      "confidence_only_z_score_vs_ber_spearman": -0.956245692524375
+    },
+    "pi_egnn": {
+      "validation_samples": 135,
+      "confidence_vs_ber_pearson": -0.9461312085055229,
+      "confidence_vs_ber_spearman": -0.9475155510649724,
+      "environment_distance_vs_ber_pearson": 0.49267572805113535,
+      "environment_distance_vs_ber_spearman": -0.07504571104218721,
+      "environment_distance_vs_ser_spearman": -0.07575820138873271,
+      "environment_distance_vs_nmse_spearman": -0.08017266608135792,
+      "distance_vs_ber_pearson": 0.5711394466669611,
+      "distance_vs_ber_spearman": -0.21713765859494458,
+      "distance_vs_ser_spearman": -0.21685187261964234,
+      "distance_vs_nmse_spearman": -0.22203199687835334,
+      "confidence_mean_low_ber_quartile": 0.6861705972867853,
+      "confidence_mean_high_ber_quartile": 0.5432873955794744,
+      "distance_mean_low_ber_quartile": 0.7434964827568052,
+      "distance_mean_high_ber_quartile": 0.916163119197969,
+      "confidence_only_z_score_vs_ber_spearman": -0.9475155510649724
+    }
+  },
+  "interpretation": "Weak or near-zero correlations are reported as findings. They mean the two-feature reliability signal is not yet predictive for that receiver; they are not treated as implementation failures."
+}

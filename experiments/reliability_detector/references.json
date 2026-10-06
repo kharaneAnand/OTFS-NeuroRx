@@ -1,0 +1,81 @@
+{
+  "reference_split": "train",
+  "evaluation_split": "validation",
+  "receivers": {
+    "mmse": {
+      "schema_version": 1,
+      "receiver": "mmse",
+      "feature_names": [
+        "receiver_qpsk_margin",
+        "environment_distance"
+      ],
+      "mean": [
+        0.4472145907584534,
+        0.7528252493130659
+      ],
+      "standard_deviation": [
+        0.06453331276436966,
+        0.6575356394893155
+      ]
+    },
+    "oamp_dl": {
+      "schema_version": 1,
+      "receiver": "oamp_dl",
+      "feature_names": [
+        "receiver_qpsk_margin",
+        "environment_distance"
+      ],
+      "mean": [
+        0.6211642489073769,
+        0.7528252493130659
+      ],
+      "standard_deviation": [
+        0.07674658065762574,
+        0.6575356394893155
+      ]
+    },
+    "original_gnn": {
+      "schema_version": 1,
+      "receiver": "original_gnn",
+      "feature_names": [
+        "receiver_qpsk_margin",
+        "environment_distance"
+      ],
+      "mean": [
+        0.6143455279961465,
+        0.7528252493130659
+      ],
+      "standard_deviation": [
+        0.08652562981484,
+        0.6575356394893155
+      ]
+    },
+    "pi_egnn": {
+      "schema_version": 1,
+      "receiver": "pi_egnn",
+      "feature_names": [
+        "receiver_qpsk_margin",
+        "environment_distance"
+      ],
+      "mean": [
+        0.6147851684736827,
+        0.7528252493130659
+      ],
+      "standard_deviation": [
+        0.08108398213112458,
+        0.6575356394893155
+      ]
+    }
+  },
+  "receiver_checkpoints_reused": true,
+  "retraining_performed": false,
+  "live_inputs": [
+    "receiver estimate",
+    "environment distance"
+  ],
+  "offline_only_labels": [
+    "ber",
+    "ser",
+    "nmse"
+  ]
+}
