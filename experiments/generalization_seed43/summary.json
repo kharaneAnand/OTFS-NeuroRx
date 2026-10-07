@@ -1,0 +1,136 @@
+{
+  "frames": 135,
+  "decision_counts": {
+    "KEEP": 130,
+    "SWITCH": 1,
+    "ADAPT": 4
+  },
+  "switch_destinations": {
+    "original_gnn": 1
+  },
+  "adaptation_recommendations": {
+    "pi_egnn": 2,
+    "oamp_dl": 2
+  },
+  "environment_distance_used_for_controller_action": false,
+  "test_labels_used_for_controller_actions": false,
+  "fresh_receiver_scoring_for_audit": true,
+  "ground_truth_frames": 135,
+  "adaptive_pipeline": {
+    "ber": 0.03939210950080515,
+    "ser": 0.07471819645732689,
+    "nmse": 0.1175775426827722
+  },
+  "always_oamp_dl": {
+    "ber": 0.03606078904991949,
+    "ser": 0.06835748792270532,
+    "nmse": 0.10879039593066256
+  },
+  "match_rate_to_per_frame_true_best_ber_receiver": 0.4148148148148148,
+  "scored_frames": 135,
+  "metrics_status": "reference_only_requires_ground_truth",
+  "run_mode": "generated_dataset_split",
+  "dataset_root": "C:\\Users\\aadit\\OTFS-NeuroRx\\experiments\\generalization_seed43\\dataset",
+  "split": "test",
+  "seed": 43,
+  "adaptation_runs": [
+    {
+      "status": "adapted",
+      "condition": {
+        "snr_db": 10,
+        "velocity_kmh": 120
+      },
+      "adapt_events": 1,
+      "calibration_samples": 15,
+      "test_samples": 15,
+      "trainable_scalar_count": 60,
+      "fixed_optimizer_steps": 20,
+      "adapted_checkpoint": "experiments\\generalization_seed43\\adapted\\snr10_v120\\oamp_dl_adapted.pt",
+      "original_checkpoint_preserved": true,
+      "original_mean_metrics": {
+        "ber": 0.0743659420289855,
+        "ser": 0.14094202898550723,
+        "nmse": 0.21649330053930432
+      },
+      "adapted_mean_metrics": {
+        "ber": 0.07427536231884058,
+        "ser": 0.14076086956521738,
+        "nmse": 0.2163653496133016
+      },
+      "paired_adapted_minus_original_ci95": {
+        "ber": {
+          "mean": -9.057971014492794e-05,
+          "ci95_low": -0.0006982176801085267,
+          "ci95_high": 0.0005170582598186708
+        },
+        "ser": {
+          "mean": -0.0001811594202898559,
+          "ci95_low": -0.0009974952070725906,
+          "ci95_high": 0.0006351763664928789
+        },
+        "nmse": {
+          "mean": -0.00012795092600263337,
+          "ci95_low": -0.00030846333893139546,
+          "ci95_high": 5.2561486926128745e-05
+        }
+      },
+      "test_labels_used_for_training": false
+    },
+    {
+      "status": "adapted",
+      "condition": {
+        "snr_db": 10,
+        "velocity_kmh": 500
+      },
+      "adapt_events": 1,
+      "calibration_samples": 15,
+      "test_samples": 15,
+      "trainable_scalar_count": 60,
+      "fixed_optimizer_steps": 20,
+      "adapted_checkpoint": "experiments\\generalization_seed43\\adapted\\snr10_v500\\oamp_dl_adapted.pt",
+      "original_checkpoint_preserved": true,
+      "original_mean_metrics": {
+        "ber": 0.05280797101449277,
+        "ser": 0.09891304347826088,
+        "nmse": 0.15940894191097382
+      },
+      "adapted_mean_metrics": {
+        "ber": 0.05271739130434784,
+        "ser": 0.09873188405797102,
+        "nmse": 0.15949968040159587
+      },
+      "paired_adapted_minus_original_ci95": {
+        "ber": {
+          "mean": -9.057971014492794e-05,
+          "ci95_low": -0.0004053178098620887,
+          "ci95_high": 0.0002241583895722328
+        },
+        "ser": {
+          "mean": -0.0001811594202898568,
+          "ci95_low": -0.0008106356197241751,
+          "ci95_high": 0.00044831677914446144
+        },
+        "nmse": {
+          "mean": 9.073849062202118e-05,
+          "ci95_low": -0.00010656246038616204,
+          "ci95_high": 0.00028803944163020444
+        }
+      },
+      "test_labels_used_for_training": false
+    },
+    {
+      "status": "unsupported_receiver_adaptation",
+      "recommended_models": [
+        "pi_egnn",
+        "pi_egnn"
+      ],
+      "reason": "The existing few-shot adapter updates OAMP-DL scalar controls only."
+    }
+  ],
+  "receiver_inference_counts": {
+    "mmse": 135,
+    "oamp_dl": 135,
+    "original_gnn": 135,
+    "pi_egnn": 135
+  }
+}

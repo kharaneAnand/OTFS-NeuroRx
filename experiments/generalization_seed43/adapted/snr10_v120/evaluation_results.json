@@ -1,0 +1,42 @@
+{
+  "status": "adapted",
+  "condition": {
+    "snr_db": 10,
+    "velocity_kmh": 120
+  },
+  "adapt_events": 1,
+  "calibration_samples": 15,
+  "test_samples": 15,
+  "trainable_scalar_count": 60,
+  "fixed_optimizer_steps": 20,
+  "adapted_checkpoint": "experiments\\generalization_seed43\\adapted\\snr10_v120\\oamp_dl_adapted.pt",
+  "original_checkpoint_preserved": true,
+  "original_mean_metrics": {
+    "ber": 0.0743659420289855,
+    "ser": 0.14094202898550723,
+    "nmse": 0.21649330053930432
+  },
+  "adapted_mean_metrics": {
+    "ber": 0.07427536231884058,
+    "ser": 0.14076086956521738,
+    "nmse": 0.2163653496133016
+  },
+  "paired_adapted_minus_original_ci95": {
+    "ber": {
+      "mean": -9.057971014492794e-05,
+      "ci95_low": -0.0006982176801085267,
+      "ci95_high": 0.0005170582598186708
+    },
+    "ser": {
+      "mean": -0.0001811594202898559,
+      "ci95_low": -0.0009974952070725906,
+      "ci95_high": 0.0006351763664928789
+    },
+    "nmse": {
+      "mean": -0.00012795092600263337,
+      "ci95_low": -0.00030846333893139546,
+      "ci95_high": 5.2561486926128745e-05
+    }
+  },
+  "test_labels_used_for_training": false
+}

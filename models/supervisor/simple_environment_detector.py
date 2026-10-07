@@ -20,13 +20,17 @@ def extract_simple_environment_features(
     h_hat: np.ndarray,
     noise_power: float,
     config,
+    mmse_estimate: np.ndarray | None = None,
+    y_data: np.ndarray | None = None,
 ) -> dict[str, float]:
     """Extract cheap, target-free SNR and channel-quality proxy features."""
 
     if noise_power < 0:
         raise ValueError("noise_power must be non-negative.")
-    y_data = build_data_observation(rx_dd, config)
-    mmse_estimate = mmse_detect(y_data, h_hat, noise_power)
+    if y_data is None:
+        y_data = build_data_observation(rx_dd, config)
+    if mmse_estimate is None:
+        mmse_estimate = mmse_detect(y_data, h_hat, noise_power)
     reconstruction = y_data - np.asarray(h_hat) @ mmse_estimate
     signal_power = float(np.sum(np.abs(y_data) ** 2))
     residual_power = float(np.sum(np.abs(reconstruction) ** 2))

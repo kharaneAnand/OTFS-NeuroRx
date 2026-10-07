@@ -16,6 +16,11 @@ from .reliability_detector import (
     ReceiverReliabilityReference,
     qpsk_boundary_margin,
 )
+from .reliability_controller import (
+    ControllerDecision,
+    ControllerThresholds,
+    ReliabilityController,
+)
 
 __all__ = [
     "EnvironmentChangeDetector",
@@ -29,4 +34,7 @@ __all__ = [
     "RELIABILITY_FEATURE_NAMES",
     "ReceiverReliabilityReference",
     "qpsk_boundary_margin",
+    "ControllerDecision",
+    "ControllerThresholds",
+    "ReliabilityController",
 ]

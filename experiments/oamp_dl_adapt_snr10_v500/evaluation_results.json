@@ -1,0 +1,108 @@
+{
+  "trigger_source": "C:\\Users\\aadit\\OTFS-NeuroRx\\experiments\\reliability_controller\\decision_log.csv",
+  "adapt_events": [
+    {
+      "frame_index": 101,
+      "sample_index": 100,
+      "file": "sample_000658.npz",
+      "snr_db": 10,
+      "velocity_kmh": 500,
+      "recommended_adaptation_model": "oamp_dl"
+    },
+    {
+      "frame_index": 102,
+      "sample_index": 101,
+      "file": "sample_000660.npz",
+      "snr_db": 10,
+      "velocity_kmh": 500,
+      "recommended_adaptation_model": "oamp_dl"
+    }
+  ],
+  "adaptation_condition": {
+    "snr_db": 10,
+    "velocity_kmh": 500
+  },
+  "calibration_split": "validation",
+  "calibration_samples": 15,
+  "calibration_files": [
+    "sample_000609.npz",
+    "sample_000613.npz",
+    "sample_000617.npz",
+    "sample_000621.npz",
+    "sample_000637.npz",
+    "sample_000641.npz",
+    "sample_000644.npz",
+    "sample_000653.npz",
+    "sample_000654.npz",
+    "sample_000662.npz",
+    "sample_000666.npz",
+    "sample_000670.npz",
+    "sample_000689.npz",
+    "sample_000694.npz",
+    "sample_000697.npz"
+  ],
+  "test_samples": 15,
+  "test_files": [
+    "sample_000601.npz",
+    "sample_000607.npz",
+    "sample_000608.npz",
+    "sample_000623.npz",
+    "sample_000627.npz",
+    "sample_000630.npz",
+    "sample_000631.npz",
+    "sample_000632.npz",
+    "sample_000643.npz",
+    "sample_000647.npz",
+    "sample_000658.npz",
+    "sample_000660.npz",
+    "sample_000678.npz",
+    "sample_000685.npz",
+    "sample_000693.npz"
+  ],
+  "calibration_test_overlap": [],
+  "trainable_scalar_count": 60,
+  "fixed_optimizer_steps": 20,
+  "optimizer": "AdamW",
+  "learning_rate": 0.0001,
+  "weight_decay": 0.001,
+  "anchor_coefficient": 0.1,
+  "original_checkpoint_preserved": true,
+  "adapted_checkpoint": "experiments\\oamp_dl_adapt_snr10_v500\\oamp_dl_adapted.pt",
+  "original": {
+    "ber": 0.04655797101449275,
+    "ser": 0.09021739130434785,
+    "nmse": 0.14231844161089813,
+    "ber_ci95": 0.01760424475566473,
+    "ser_ci95": 0.033597596926248335,
+    "nmse_ci95": 0.05437381736827434
+  },
+  "adapted": {
+    "ber": 0.04628623188405797,
+    "ser": 0.08967391304347827,
+    "nmse": 0.14241256564562416,
+    "ber_ci95": 0.017440425797722973,
+    "ser_ci95": 0.03327358381602728,
+    "nmse_ci95": 0.05445770330203239
+  },
+  "paired_adapted_minus_original": {
+    "ber": {
+      "mean": -0.00027173913043478245,
+      "ci95": 0.0003854738734601252,
+      "ci95_low": -0.0006572130038949076,
+      "ci95_high": 0.00011373474302534274
+    },
+    "ser": {
+      "mean": -0.0005434782608695649,
+      "ci95": 0.0007709477469202504,
+      "ci95_low": -0.0013144260077898153,
+      "ci95_high": 0.00022746948605068549
+    },
+    "nmse": {
+      "mean": 9.412403472602165e-05,
+      "ci95": 0.00013497601845907019,
+      "ci95_low": -4.085198373304853e-05,
+      "ci95_high": 0.00022910005318509184
+    }
+  },
+  "conclusion_caution": "Suggestive single-condition experiment only: 15 labeled calibration frames and 15 held-out test frames. Test data did not update parameters or select steps."
+}

@@ -9,7 +9,7 @@ Research code for generating an OTFS dataset, developing neural and model-based 
 - **GNN receiver:** the MMSE-initialized GNN remains the original GNN candidate/third receiver. The neutral-initialized GNN is an initialization ablation.
 - **PI-EGNN:** retained as an experimental candidate, but its run is a documented negative and it did not meet the pre-registered bar to replace the original GNN.
 - **Environment-change detector:** the active implementation is now a stateless mean/std distance score. The older martingale implementation is preserved for reference but is not the active path. The score is not connected to receiver selection yet.
-- **Adaptation/retraining:** not implemented. This repository currently does not automatically retrain or promote a receiver.
+- **Few-shot OAMP-DL adaptation:** an offline, manually invoked experimental script now adapts only OAMP-DL's 60 scalar controls for the logged 10 dB / 500 km/h ADAPT condition. Automatic controller-triggered adaptation or checkpoint promotion is not implemented.
 
 ## Dataset and Fairness
 
@@ -25,6 +25,37 @@ Key paths:
 - Main experiment configuration: `configs/experiment_v1.yaml`
 
 The configuration describes a 16 x 32 received delay-Doppler grid, a 432 x 368 data-domain estimated channel, and 368 QPSK data symbols per frame. Current evaluation reports per-frame BER, SER, and NMSE; aggregate summaries generally use mean +/- 1.96 standard errors for CI95. Small per-condition test groups (15 frames) mean these intervals should be interpreted cautiously.
+
+## Unified Pipeline Application
+
+The root `run_pipeline.py` runs a single frame or a dataset split through the active receiver adapter, environment-distance extraction, reliability-reference scoring, and the current stateful controller. It starts on OAMP-DL unless a prior controller state is provided. The controller's existing lazy candidate inference, confidence thresholds, cooldown, and frozen BER gate are unchanged. Environment distance is reported but does not affect the controller action.
+
+Run one existing frame (the SNR and velocity are required because they are not stored inside the NPZ):
+
+```bash
+python run_pipeline.py --input datasets/otfs/raw/sample_000000.npz --snr 10 --velocity 30
+```
+
+Generate one frame in the run's scratch directory with a seed different from V1:
+
+```bash
+python run_pipeline.py --generate --snr 10 --velocity 500 --seed 43
+```
+
+Run the current test split, or generate a fully independent 900-frame dataset and run its test split:
+
+```bash
+python run_pipeline.py --dataset-root datasets/otfs --split test
+python run_pipeline.py --generate-dataset --seed 43 --output-dir experiments/generalization_seed43
+```
+
+`--generate-dataset` writes the new dataset and split below the new run directory; it does not overwrite `datasets/otfs/`. In this mode the app performs fresh inference for each receiver on each evaluated frame and computes BER/SER/NMSE directly from that frame's `tx_dd` after routing. It does not use the original test-index metric CSVs. Thus it resolves the prior fresh-per-frame-scoring gap for this batch workflow; the trained checkpoints and reference statistics remain fixed from the original training data.
+
+The JSON frame output contains all complex symbol estimates as real/imaginary pairs and QPSK hard bits. The bit rule is `real >= 0` gives bit 0 value `1` (otherwise `0`), and `imag >= 0` gives bit 1 value `1` (otherwise `0`). Metrics are marked `reference_only_requires_ground_truth` when `tx_dd` exists; without `tx_dd`, BER/SER/NMSE are all `null` and the status is `unavailable_no_ground_truth`.
+
+Batch output includes `summary.json`, `frames.jsonl`, `decision_log.csv`, and `predictions.npz`. Supply `--state-out state.json` and later `--state-in state.json --state-out next_state.json` to carry active receiver, low-confidence streak, switch cooldown, and frame counter between invocations. Outputs go to a new timestamped folder under `experiments/pipeline_runs/` unless `--output-dir` is supplied; existing output directories are refused.
+
+An OAMP-DL `ADAPT` recommendation is run against the matching 15-frame validation condition when a calibration dataset is available, using the existing fixed-step few-shot settings and a separate run-local checkpoint. This does not promote or overwrite the base checkpoint. Other receiver recommendations are reported as unsupported by the existing OAMP-DL-only adaptation routine. A single frame without a calibration dataset can only report the recommendation.
 
 ## Receiver Models
 
@@ -226,6 +257,42 @@ Latest validation audit: all four frozen receivers were run freshly on 630 train
 
 MMSE's confidence-BER relationship is meaningfully weaker than the learned receivers'. MMSE is a fixed linear estimator and was not trained to produce calibrated confidence, while the learned receivers' training process implicitly ties confident outputs to correct outputs. The future controller should therefore interpret or weight MMSE's confidence score differently rather than assuming all four receiver confidence signals are equally trustworthy.
 
+## Rule-Based Controller
+
+The first controller keeps one `active_model` state. It starts at `oamp_dl`, uses only receiver confidence margins for decisions, and logs environment distance separately without using it in the policy. The candidate pool is `mmse`, `oamp_dl`, `original_gnn`, and `pi_egnn`.
+
+Thresholds are locked from training confidence references only:
+
+- Each margin is standardized using that receiver's own training-reference mean/std: `z = (margin - receiver_train_mean) / receiver_train_std`.
+- Active confidence is unusually low when its z-score is below `-1.0`.
+- A switch candidate is clearly better when its z-score is at least `0.5` above the active model's z-score. This threshold is fixed before evaluating the test set; it is not adjusted to force or suppress a particular receiver switch.
+- A candidate must also pass a frozen absolute BER-quality gate: its previously validated aggregate BER must be within `0.005` of both the active model and OAMP-DL's benchmark BER. The fixed source values are in `configs/reliability_controller_v1.json`; PI-EGNN's 0.04003 BER is outside the OAMP-DL cap of 0.03796, while the original GNN's 0.03687 remains inside it. These are prior receiver-bank results, not labels from the controller audit.
+- Low confidence must persist for 2 consecutive frames before candidates are evaluated.
+- At least 10 frames must pass between switches.
+
+The controller emits `KEEP`, `SWITCH`, or an `ADAPT` recommendation. `ADAPT` identifies the highest-confidence candidate but does not retrain it. The test audit uses live confidence margins for decisions and only afterward joins the existing per-frame BER/SER/NMSE for reporting.
+
+Run the sequential fixed-test audit after reliability references exist:
+
+```bash
+python evaluations/supervisor/evaluate_reliability_controller.py --config configs/experiment_v1.yaml
+```
+
+The evaluator computes the active receiver first and calls other receiver adapters only after the two-frame low-confidence guard. It also compares `decision` and active-model sequences against an existing `decision_log.csv` when present, reporting `decision_outcomes_unchanged_vs_previous_log`. Outputs are written to `experiments/reliability_controller/evaluation_results.json`, `decision_log.csv`, and `selected_frame_results.csv`; inference call counts are included. The headline comparison is controller-selected BER/SER/NMSE versus always using OAMP-DL, plus frame-level match rate to the receiver with the lowest offline BER. Test labels are loaded only after sequential decisions for this audit and never enter the decision function.
+
+## Few-Shot OAMP-DL Adaptation
+
+`training/supervisor/adapt_oamp_dl_fewshot.py` implements a manual experiment for the two saved controller ADAPT events, both at 10 dB / 500 km/h and both recommending OAMP-DL. It uses 15 labeled validation frames from that condition, updates only the existing 60 OAMP-DL scalar controls for 20 fixed AdamW steps, and applies an anchor penalty. It writes a separate adapted checkpoint; the original OAMP-DL checkpoint is preserved. The same-condition test set is used only afterward for paired comparison.
+
+Latest run on 15 held-out test frames:
+
+| Model | BER (95% CI half-width) | SER (95% CI half-width) | NMSE (95% CI half-width) |
+|---|---:|---:|---:|
+| Original OAMP-DL | 0.04656 (0.01760) | 0.09022 (0.03360) | 0.14232 (0.05437) |
+| Adapted OAMP-DL | 0.04629 (0.01744) | 0.08967 (0.03327) | 0.14241 (0.05446) |
+
+Paired adapted-minus-original differences were BER `-0.000272` (CI95 `[-0.000657, 0.000114]`), SER `-0.000543` (`[-0.001314, 0.000227]`), and NMSE `+0.000094` (`[-0.000041, 0.000229]`). Every paired interval includes zero. This is a single small-sample experiment and is **suggestive, not definitive**: BER/SER improved slightly, NMSE worsened slightly, and there is no clear evidence of a real benefit. The controller-selected condition came from test-time unlabeled ADAPT events; the event frames were not used for fine-tuning, but this remains an exploratory condition-specific result rather than a pristine confirmatory study.
+
 ## Result Locations
 
 - DNN: `experiments/dnn/`
@@ -234,6 +301,7 @@ MMSE's confidence-BER relationship is meaningfully weaker than the learned recei
 - OAMP-DL: `experiments/oamp_dl/`
 - Plain OAMP: `experiments/oamp/`
 - PI-EGNN transferred GPU run: `gpu_results/pi_egnn/`
+- Few-shot adapted OAMP-DL: `experiments/oamp_dl_adapt_snr10_v500/`
 - Active simple detector outputs: `experiments/environment_detector_simple/`
 - Preserved martingale detector outputs: `experiments/environment_detector/`
 - Classical baselines: `experiments/baseline/`

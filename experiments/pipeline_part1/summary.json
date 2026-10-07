@@ -1,0 +1,85 @@
+{
+  "frames": 135,
+  "decision_counts": {
+    "KEEP": 132,
+    "SWITCH": 1,
+    "ADAPT": 2
+  },
+  "switch_destinations": {
+    "original_gnn": 1
+  },
+  "adaptation_recommendations": {
+    "oamp_dl": 2
+  },
+  "environment_distance_used_for_controller_action": false,
+  "test_labels_used_for_controller_actions": false,
+  "fresh_receiver_scoring_for_audit": true,
+  "ground_truth_frames": 135,
+  "adaptive_pipeline": {
+    "ber": 0.03537640901771336,
+    "ser": 0.06807568438003221,
+    "nmse": 0.10919489498141835
+  },
+  "always_oamp_dl": {
+    "ber": 0.0329609500805153,
+    "ser": 0.06344605475040258,
+    "nmse": 0.10174544213735098
+  },
+  "match_rate_to_per_frame_true_best_ber_receiver": 0.5037037037037037,
+  "scored_frames": 135,
+  "metrics_status": "reference_only_requires_ground_truth",
+  "run_mode": "existing_dataset_split",
+  "dataset_root": "C:\\Users\\aadit\\OTFS-NeuroRx\\datasets\\otfs",
+  "split": "test",
+  "seed": 42,
+  "adaptation_runs": [
+    {
+      "status": "adapted",
+      "condition": {
+        "snr_db": 10,
+        "velocity_kmh": 500
+      },
+      "adapt_events": 2,
+      "calibration_samples": 15,
+      "test_samples": 15,
+      "trainable_scalar_count": 60,
+      "fixed_optimizer_steps": 20,
+      "adapted_checkpoint": "experiments\\pipeline_part1\\adapted\\snr10_v500\\oamp_dl_adapted.pt",
+      "original_checkpoint_preserved": true,
+      "original_mean_metrics": {
+        "ber": 0.04655797101449275,
+        "ser": 0.09021739130434785,
+        "nmse": 0.14231844161089813
+      },
+      "adapted_mean_metrics": {
+        "ber": 0.04628623188405797,
+        "ser": 0.08967391304347827,
+        "nmse": 0.14241256564562416
+      },
+      "paired_adapted_minus_original_ci95": {
+        "ber": {
+          "mean": -0.00027173913043478245,
+          "ci95_low": -0.0006572130038949076,
+          "ci95_high": 0.00011373474302534274
+        },
+        "ser": {
+          "mean": -0.0005434782608695649,
+          "ci95_low": -0.0013144260077898153,
+          "ci95_high": 0.00022746948605068549
+        },
+        "nmse": {
+          "mean": 9.412403472602165e-05,
+          "ci95_low": -4.085198373304853e-05,
+          "ci95_high": 0.00022910005318509184
+        }
+      },
+      "test_labels_used_for_training": false
+    }
+  ],
+  "receiver_inference_counts": {
+    "mmse": 135,
+    "oamp_dl": 135,
+    "original_gnn": 135,
+    "pi_egnn": 135
+  }
+}

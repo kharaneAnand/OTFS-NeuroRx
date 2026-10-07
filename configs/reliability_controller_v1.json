@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "active_model_initial": "oamp_dl",
+  "thresholds": {
+    "low_confidence_z": -1.0,
+    "switch_confidence_z_gap": 0.5,
+    "consecutive_low_frames": 2,
+    "minimum_frames_between_switches": 10
+  },
+  "absolute_performance_gate": {
+    "metric": "overall validation/test-set BER from previously accepted receiver-bank evaluations",
+    "noninferiority_margin_absolute_ber": 0.005,
+    "best_reference_receiver": "oamp_dl",
+    "candidate_must_be_within_active_model_margin": true,
+    "candidate_must_be_within_best_receiver_margin": true,
+    "reason": "Reject candidates whose established overall BER is meaningfully worse, even if raw confidence scales make their per-frame margin look high.",
+    "source_results": {
+      "mmse": 0.06687801932367149,
+      "oamp_dl": 0.03296095008051529,
+      "original_gnn": 0.03686594202898551,
+      "pi_egnn": 0.04002616747181964
+    },
+    "source_note": "Pre-existing receiver evaluation artifacts; controller test outcomes are not used to set this gate."
+  }
+}
